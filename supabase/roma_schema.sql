@@ -1,0 +1,105 @@
+-- Roma Gravataria e Moda Masculina — Schema Supabase (Prefixo: roma_)
+
+CREATE TABLE IF NOT EXISTS roma_produtos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  categoria TEXT NOT NULL,
+  preco NUMERIC(10,2) NOT NULL,
+  preco_pix NUMERIC(10,2) NOT NULL,
+  preco_original NUMERIC(10,2),
+  estoque INTEGER NOT NULL DEFAULT 0,
+  cores JSONB NOT NULL DEFAULT '[]'::jsonb,
+  tamanhos JSONB NOT NULL DEFAULT '[]'::jsonb,
+  imagem_url TEXT,
+  destaque BOOLEAN DEFAULT false,
+  mais_vendido BOOLEAN DEFAULT false,
+  descricao TEXT,
+  ativo BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS roma_pedidos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  numero_pedido TEXT UNIQUE NOT NULL,
+  cliente_nome TEXT NOT NULL,
+  cliente_email TEXT,
+  cliente_whatsapp TEXT NOT NULL,
+  cep TEXT,
+  endereco TEXT,
+  itens JSONB NOT NULL DEFAULT '[]'::jsonb,
+  subtotal NUMERIC(10,2) NOT NULL,
+  frete NUMERIC(10,2) NOT NULL DEFAULT 0,
+  desconto_pix NUMERIC(10,2) NOT NULL DEFAULT 0,
+  total NUMERIC(10,2) NOT NULL,
+  forma_pagamento TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Pendente',
+  comissao_percentual NUMERIC(5,2) NOT NULL DEFAULT 10.00,
+  comissao_valor NUMERIC(10,2) NOT NULL DEFAULT 0,
+  comissao_paga BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS roma_visitas (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pagina TEXT NOT NULL,
+  origem_utm TEXT DEFAULT 'Direto',
+  dispositivo TEXT DEFAULT 'Desktop',
+  session_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS roma_leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  whatsapp TEXT NOT NULL,
+  email TEXT,
+  interesse TEXT,
+  origem TEXT NOT NULL DEFAULT 'Bot Especialista',
+  status TEXT NOT NULL DEFAULT 'Novo',
+  notas TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS roma_blog_posts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  titulo TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  categoria TEXT NOT NULL,
+  resumo TEXT NOT NULL,
+  conteudo TEXT NOT NULL,
+  imagem_url TEXT,
+  tempo_leitura TEXT DEFAULT '4 min',
+  publicado BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS roma_usuarios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  nivel_acesso TEXT NOT NULL DEFAULT 'Vendedor',
+  permissoes_abas JSONB NOT NULL DEFAULT '{
+    "dashboard": true,
+    "vendas": true,
+    "comissoes": false,
+    "produtos": false,
+    "visitas": false,
+    "leads": true,
+    "blog": false,
+    "configuracoes": false
+  }'::jsonb,
+  ativo BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Bucket de Storage para imagens otimizadas da Roma
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('roma-imagens', 'roma-imagens', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "roma_imagens_public_read" ON storage.objects
+  FOR SELECT USING (bucket_id = 'roma-imagens');
+
+CREATE POLICY "roma_imagens_public_insert" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'roma-imagens');

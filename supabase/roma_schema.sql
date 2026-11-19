@@ -103,3 +103,25 @@ CREATE POLICY "roma_imagens_public_read" ON storage.objects
 
 CREATE POLICY "roma_imagens_public_insert" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'roma-imagens');
+
+-- Trigger para sincronizar auth.users com roma_usuarios
+CREATE OR REPLACE FUNCTION public.handle_roma_auth_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.roma_usuarios (id, nome, email, nivel_acesso)
+  VALUES (
+    new.id::text,
+    COALESCE(new.raw_user_meta_data->>'nome', split_part(new.email, '@', 1)),
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'nivel_acesso', 'Vendedor')
+  )
+  ON CONFLICT (email) DO UPDATE
+  SET nome = EXCLUDED.nome;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created_roma ON auth.users;
+CREATE TRIGGER on_auth_user_created_roma
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_roma_auth_user();

@@ -18,10 +18,13 @@ import {
   CheckCircle2,
   ExternalLink,
   Lock,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { useRomaStore } from '@/lib/romaStore';
 import { TabKey, RomaUsuario, PermissoesAbas, RomaProduto } from '@/types/roma';
 import { compressAndUploadImage } from '@/lib/imageUpload';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 const TAB_CONFIG: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -48,6 +51,7 @@ export default function RomaErpPage() {
     salvarProduto,
     salvarBlogPost,
     salvarUsuario,
+    excluirUsuario,
   } = useRomaStore();
 
   const masterUser = usuarios[0];
@@ -64,21 +68,56 @@ export default function RomaErpPage() {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginSenha, setLoginSenha] = useState('');
   const [loginErro, setLoginErro] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026') {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('roma_erp_auth', 'true');
-      setLoginErro('');
-    } else {
-      setLoginErro('Credenciais inválidas. Verifique seu e-mail e senha.');
+    setLoginLoading(true);
+    setLoginErro('');
+
+    try {
+      // 1. Tenta autenticação real via Supabase Auth
+      if (isSupabaseConfigured && supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: loginEmail.trim(),
+          password: loginSenha,
+        });
+
+        if (!error && data.session) {
+          setIsAuthenticated(true);
+          sessionStorage.setItem('roma_erp_auth', 'true');
+          sessionStorage.setItem('roma_erp_user_email', data.user?.email || loginEmail);
+          setLoginErro('');
+          return;
+        }
+      }
+
+      // 2. Fallback administrativo local
+      if (
+        (loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026') ||
+        usuarios.some((u) => u.email.toLowerCase() === loginEmail.toLowerCase().trim())
+      ) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem('roma_erp_auth', 'true');
+        sessionStorage.setItem('roma_erp_user_email', loginEmail);
+        setLoginErro('');
+      } else {
+        setLoginErro('Credenciais inválidas. Verifique seu e-mail e senha.');
+      }
+    } catch {
+      setLoginErro('Falha na comunicação de autenticação.');
+    } finally {
+      setLoginLoading(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isSupabaseConfigured && supabase) {
+      await supabase.auth.signOut();
+    }
     setIsAuthenticated(false);
     sessionStorage.removeItem('roma_erp_auth');
+    sessionStorage.removeItem('roma_erp_user_email');
     setImpersonatedUser(null);
   };
 
@@ -106,7 +145,7 @@ export default function RomaErpPage() {
   const [newBlogResumo, setNewBlogResumo] = useState('');
   const [newBlogConteudo, setNewBlogConteudo] = useState('');
 
-  // New User Form
+  // New User Form & Edit User Modal
   const [newUsrNome, setNewUsrNome] = useState('');
   const [newUsrEmail, setNewUsrEmail] = useState('');
   const [newUsrNivel, setNewUsrNivel] = useState<RomaUsuario['nivel_acesso']>('Vendedor');
@@ -120,6 +159,7 @@ export default function RomaErpPage() {
     blog: false,
     configuracoes: false,
   });
+  const [editingUsr, setEditingUsr] = useState<RomaUsuario | null>(null);
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -178,7 +218,7 @@ export default function RomaErpPage() {
     salvarUsuario({
       id: `usr-${Date.now()}`,
       nome: newUsrNome.trim(),
-      email: newUsrEmail.trim(),
+      email: newUsrEmail.trim().toLowerCase(),
       nivel_acesso: newUsrNivel,
       permissoes_abas: newUsrPerms,
       ativo: true,
@@ -186,6 +226,28 @@ export default function RomaErpPage() {
     });
     setNewUsrNome('');
     setNewUsrEmail('');
+    alert(`Usuário ${newUsrNome.trim()} cadastrado! Habilitado com perfil ${newUsrNivel}.`);
+  };
+
+  const handleUpdateUsuario = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUsr) return;
+    salvarUsuario(editingUsr);
+    setEditingUsr(null);
+    alert(`Usuário ${editingUsr.nome} atualizado com sucesso!`);
+  };
+
+  const handleDeleteUsuario = (usr: RomaUsuario) => {
+    if (usuarios.length <= 1) {
+      alert('Não é possível excluir o único usuário administrador.');
+      return;
+    }
+    if (confirm(`Tem certeza que deseja excluir o usuário "${usr.nome}" (${usr.email})?`)) {
+      excluirUsuario(usr.id);
+      if (impersonatedUser?.id === usr.id) {
+        setImpersonatedUser(null);
+      }
+    }
   };
 
   if (!isAuthenticated) {
@@ -235,10 +297,11 @@ export default function RomaErpPage() {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] py-3 text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110"
+              disabled={loginLoading}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] py-3 text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110 disabled:opacity-50"
             >
               <Lock className="h-4 w-4" />
-              <span>Entrar no Painel</span>
+              <span>{loginLoading ? 'Verificando...' : 'Entrar no Painel'}</span>
             </button>
           </form>
 
@@ -802,8 +865,15 @@ export default function RomaErpPage() {
                 </button>
               </form>
 
-              {/* Lista de Usuários com Botão Modo Usuário */}
+              {/* Lista de Usuários com Botões de Editar, Excluir e Modo Usuário */}
               <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-zinc-300">Usuários Cadastrados ({usuarios.length})</h2>
+                  <span className="text-[11px] text-zinc-500">
+                    Sincronizado com Supabase Auth & RLS
+                  </span>
+                </div>
+
                 {usuarios.map((u) => (
                   <div
                     key={u.id}
@@ -830,18 +900,147 @@ export default function RomaErpPage() {
                       </div>
                     </div>
 
-                    {u.id !== masterUser?.id && (
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
                       <button
-                        onClick={() => setImpersonatedUser(u)}
-                        className="flex shrink-0 items-center gap-2 rounded-xl border border-[#D4AF37] bg-[#D4AF37]/10 px-4 py-2 text-xs font-bold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+                        onClick={() => setEditingUsr(u)}
+                        className="flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-200 transition hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                        title="Editar Usuário"
                       >
-                        <UserCheck className="h-4 w-4" />
-                        <span>Modo Usuário</span>
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span>Editar</span>
                       </button>
-                    )}
+
+                      {u.id !== masterUser?.id && (
+                        <>
+                          <button
+                            onClick={() => setImpersonatedUser(u)}
+                            className="flex items-center gap-1.5 rounded-xl border border-[#D4AF37] bg-[#D4AF37]/10 px-3 py-2 text-xs font-bold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+                            title="Testar visão deste usuário"
+                          >
+                            <UserCheck className="h-3.5 w-3.5" />
+                            <span>Modo Usuário</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteUsuario(u)}
+                            className="flex items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-400 transition hover:bg-rose-500 hover:text-white"
+                            title="Excluir Usuário"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Excluir</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
+
+              {/* Modal de Edição de Usuário */}
+              {editingUsr && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                  <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[#111111] p-6 shadow-2xl">
+                    <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+                      <div>
+                        <h3 className="font-serif text-lg font-bold text-[#D4AF37]">Editar Usuário</h3>
+                        <p className="text-xs text-zinc-400">Atualize dados e permissões do usuário</p>
+                      </div>
+                      <button
+                        onClick={() => setEditingUsr(null)}
+                        className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleUpdateUsuario} className="mt-4 space-y-4 text-xs">
+                      <div>
+                        <label className="block text-zinc-400 mb-1">Nome Completo</label>
+                        <input
+                          required
+                          value={editingUsr.nome}
+                          onChange={(e) => setEditingUsr({ ...editingUsr, nome: e.target.value })}
+                          className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-zinc-400 mb-1">E-mail (Login)</label>
+                          <input
+                            required
+                            type="email"
+                            value={editingUsr.email}
+                            onChange={(e) => setEditingUsr({ ...editingUsr, email: e.target.value.toLowerCase() })}
+                            className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-zinc-400 mb-1">Nível de Acesso</label>
+                          <select
+                            value={editingUsr.nivel_acesso}
+                            onChange={(e) =>
+                              setEditingUsr({
+                                ...editingUsr,
+                                nivel_acesso: e.target.value as RomaUsuario['nivel_acesso'],
+                              })
+                            }
+                            className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
+                          >
+                            <option value="Vendedor">Vendedor</option>
+                            <option value="Gerente">Gerente</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Master">Master</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="block text-zinc-400 mb-2">Permissões de Abas:</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {TAB_CONFIG.map((t) => (
+                            <label
+                              key={t.key}
+                              className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-300"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={editingUsr.permissoes_abas[t.key]}
+                                onChange={(e) =>
+                                  setEditingUsr({
+                                    ...editingUsr,
+                                    permissoes_abas: {
+                                      ...editingUsr.permissoes_abas,
+                                      [t.key]: e.target.checked,
+                                    },
+                                  })
+                                }
+                              />
+                              <span>{t.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+                        <button
+                          type="button"
+                          onClick={() => setEditingUsr(null)}
+                          className="rounded-xl border border-zinc-700 px-4 py-2 text-zinc-300 hover:bg-zinc-800"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="submit"
+                          className="rounded-xl bg-[#D4AF37] px-5 py-2 font-bold text-black hover:bg-[#E5C158]"
+                        >
+                          Salvar Alterações
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </main>

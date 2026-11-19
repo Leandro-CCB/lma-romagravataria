@@ -258,6 +258,26 @@ export function useRomaStore() {
       saveLocal(KEYS.usuarios, next);
       return next;
     });
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('roma_usuarios').upsert({
+        id: usr.id,
+        nome: usr.nome,
+        email: usr.email,
+        nivel_acesso: usr.nivel_acesso,
+        permissoes_abas: usr.permissoes_abas,
+      });
+    }
+  }, []);
+
+  const excluirUsuario = useCallback((id: string) => {
+    setUsuarios((prev) => {
+      const next = prev.filter((u) => u.id !== id);
+      saveLocal(KEYS.usuarios, next);
+      return next;
+    });
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('roma_usuarios').delete().eq('id', id);
+    }
   }, []);
 
   return {
@@ -277,5 +297,6 @@ export function useRomaStore() {
     salvarProduto,
     salvarBlogPost,
     salvarUsuario,
+    excluirUsuario,
   };
 }

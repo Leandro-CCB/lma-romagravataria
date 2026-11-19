@@ -17,6 +17,7 @@ import {
   Plus,
   CheckCircle2,
   ExternalLink,
+  Lock,
 } from 'lucide-react';
 import { useRomaStore } from '@/lib/romaStore';
 import { TabKey, RomaUsuario, PermissoesAbas, RomaProduto } from '@/types/roma';
@@ -52,6 +53,34 @@ export default function RomaErpPage() {
   const masterUser = usuarios[0];
   const [impersonatedUser, setImpersonatedUser] = useState<RomaUsuario | null>(null);
   const activeUser = impersonatedUser || masterUser;
+
+  // Autenticação da Área Administrativa
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('roma_erp_auth') === 'true';
+    }
+    return false;
+  });
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginSenha, setLoginSenha] = useState('');
+  const [loginErro, setLoginErro] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('roma_erp_auth', 'true');
+      setLoginErro('');
+    } else {
+      setLoginErro('Credenciais inválidas. Verifique seu e-mail e senha.');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('roma_erp_auth');
+    setImpersonatedUser(null);
+  };
 
   const allowedTabs = useMemo(
     () => TAB_CONFIG.filter((t) => activeUser?.permissoes_abas?.[t.key]),
@@ -159,6 +188,74 @@ export default function RomaErpPage() {
     setNewUsrEmail('');
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#080808] p-4 text-white">
+        <div className="w-full max-w-md rounded-3xl border border-[#D4AF37]/30 bg-[#0F0F0F] p-8 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+          <div className="mb-6 text-center">
+            <img
+              src="/logo-roma.jpg"
+              alt="Roma Moda Social Masculina"
+              className="mx-auto h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.6)]"
+            />
+            <h1 className="mt-4 text-xl font-bold tracking-tight text-white">Área do Administrador</h1>
+            <p className="mt-1 text-xs text-zinc-400">Acesso restrito ao ERP e Gestão Roma</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-zinc-300">E-mail</label>
+              <input
+                type="email"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@roma.com.br"
+                className="w-full rounded-xl border border-zinc-800 bg-[#161616] px-4 py-3 text-xs text-white outline-none transition focus:border-[#D4AF37]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-zinc-300">Senha</label>
+              <input
+                type="password"
+                required
+                value={loginSenha}
+                onChange={(e) => setLoginSenha(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-zinc-800 bg-[#161616] px-4 py-3 text-xs text-white outline-none transition focus:border-[#D4AF37]"
+              />
+            </div>
+
+            {loginErro && (
+              <p className="rounded-lg bg-red-950/50 p-2.5 text-center text-xs font-medium text-red-400 border border-red-800/50">
+                {loginErro}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] py-3 text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110"
+            >
+              <Lock className="h-4 w-4" />
+              <span>Entrar no Painel</span>
+            </button>
+          </form>
+
+          <div className="mt-6 border-t border-zinc-800/80 pt-4 text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-[#D4AF37]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Voltar para a Loja</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#080808] text-zinc-100">
       {/* Modo Usuário Banner */}
@@ -213,7 +310,7 @@ export default function RomaErpPage() {
             ))}
           </nav>
 
-          <div className="mt-8 border-t border-zinc-800 pt-4">
+          <div className="mt-8 border-t border-zinc-800 pt-4 space-y-2">
             <Link
               href="/"
               className="flex items-center gap-2 rounded-xl border border-zinc-800 px-3.5 py-2.5 text-xs font-semibold text-zinc-300 hover:border-[#D4AF37]/50 hover:text-[#D4AF37]"
@@ -221,6 +318,13 @@ export default function RomaErpPage() {
               <ArrowLeft className="h-4 w-4" />
               <span>Ir para a Loja</span>
             </Link>
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 px-3.5 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/15"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sair da Sessão</span>
+            </button>
           </div>
         </aside>
 

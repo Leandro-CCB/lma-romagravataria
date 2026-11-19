@@ -14,8 +14,8 @@ import {
   Minus,
   CheckCircle2,
   BookOpen,
-  LayoutDashboard,
   ArrowRight,
+  Lock,
 } from 'lucide-react';
 import { useRomaStore } from '@/lib/romaStore';
 import { RomaProduto, RomaItemPedido, RomaBlogPost } from '@/types/roma';
@@ -139,17 +139,28 @@ export default function RomaStorePage() {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-[#D4AF37]/25 bg-[#080808]/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo-roma.jpg"
-              alt="Roma Moda Social Masculina"
-              className="h-12 w-auto object-contain drop-shadow-[0_0_12px_rgba(212,175,55,0.45)]"
-            />
-          </div>
+      <header className="sticky top-0 z-40 border-b border-[#D4AF37]/30 bg-[#060606]/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:py-4">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute -inset-1 rounded-full bg-[#D4AF37]/25 blur-md transition duration-500 group-hover:bg-[#D4AF37]/45" />
+              <img
+                src="/logo-roma.jpg"
+                alt="Roma Moda Social Masculina"
+                className="relative h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_16px_rgba(212,175,55,0.7)] transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <div className="hidden flex-col sm:flex">
+              <span className="font-serif text-lg font-black tracking-widest text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
+                ROMA
+              </span>
+              <span className="text-[9px] font-semibold tracking-[0.25em] text-zinc-400 uppercase">
+                Moda Social Masculina
+              </span>
+            </div>
+          </Link>
 
-          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-zinc-800 bg-[#121212] px-4 py-2 md:flex">
+          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-zinc-800 bg-[#121212] px-4 py-2.5 md:flex">
             <Search className="h-4 w-4 text-zinc-400" />
             <input
               type="text"
@@ -160,26 +171,18 @@ export default function RomaStorePage() {
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <a
               href="#blog"
-              className="hidden items-center gap-1.5 text-xs font-medium text-zinc-300 hover:text-[#D4AF37] sm:flex"
+              className="hidden items-center gap-1.5 text-xs font-semibold text-zinc-300 transition hover:text-[#D4AF37] sm:flex"
             >
               <BookOpen className="h-4 w-4" />
               <span>Blog</span>
             </a>
 
-            <Link
-              href="/erp"
-              className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/40 bg-[#141414] px-3.5 py-2 text-xs font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5" />
-              <span>ERP Admin</span>
-            </Link>
-
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 rounded-full bg-[#D4AF37] px-4 py-2 text-xs font-bold text-black transition hover:bg-[#E5C158]"
+              className="relative flex items-center gap-2 rounded-full bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] px-5 py-2.5 text-xs font-bold text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110"
             >
               <ShoppingBag className="h-4 w-4" />
               <span>Carrinho ({cart.reduce((s, i) => s + i.quantidade, 0)})</span>
@@ -419,8 +422,64 @@ export default function RomaStorePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-900 bg-[#050505] py-8 text-center text-xs text-zinc-500">
-        © 2026 Roma Gravataria e Moda Social Masculina • Todos os direitos reservados
+      <footer className="border-t border-[#D4AF37]/20 bg-[#050505] py-12 text-zinc-400">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-zinc-900">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/logo-roma.jpg"
+                  alt="Roma"
+                  className="h-12 w-auto object-contain drop-shadow-[0_0_12px_rgba(212,175,55,0.5)]"
+                />
+                <div>
+                  <p className="font-serif font-black tracking-widest text-[#D4AF37]">ROMA</p>
+                  <p className="text-[10px] tracking-wider text-zinc-500 uppercase">Moda Social Masculina</p>
+                </div>
+              </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Referência em gravatas slim, tradicionais, camisas de bambu e alfaiataria fina para eventos e casamentos.
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-white">Navegação</p>
+              <ul className="mt-3 space-y-2 text-xs">
+                <li><a href="#catalogo" className="hover:text-[#D4AF37]">Coleção & Produtos</a></li>
+                <li><a href="#blog" className="hover:text-[#D4AF37]">Blog de Moda Masculina</a></li>
+                <li><button onClick={() => setCategoria('Kits Noivo & Padrinhos')} className="hover:text-[#D4AF37]">Kits Noivos & Padrinhos</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-white">Atendimento VIP</p>
+              <ul className="mt-3 space-y-2 text-xs">
+                <li>Segunda a Sexta: 08h às 18h</li>
+                <li>Sábados: 08h às 13h</li>
+                <li className="text-[#D4AF37] font-semibold">Envio para todo o Brasil</li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-white">Gestão Interna</p>
+              <p className="text-xs text-zinc-500">
+                Acesso exclusivo para administradores e equipe de vendas Roma.
+              </p>
+              <Link
+                href="/erp"
+                className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#121212] px-4 py-2.5 text-xs font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+              >
+                <Lock className="h-3.5 w-3.5" />
+                <span>Área do Administrador</span>
+              </Link>
+            </div>
+          </div>
+
+          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+            <p>© 2026 Roma Gravataria e Moda Social Masculina • Todos os direitos reservados</p>
+            <p className="text-zinc-600">Desenvolvido com padrão de alta costura</p>
+          </div>
+        </div>
       </footer>
 
       {/* Cart Drawer */}

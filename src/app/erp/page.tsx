@@ -92,15 +92,23 @@ export default function RomaErpPage() {
         }
       }
 
-      // 2. Fallback administrativo local
-      if (
-        (loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026') ||
-        usuarios.some((u) => u.email.toLowerCase() === loginEmail.toLowerCase().trim())
-      ) {
+      // 2. Validação por usuário cadastrado no sistema
+      const targetUser = usuarios.find((u) => u.email.toLowerCase() === loginEmail.toLowerCase().trim());
+      const isMasterDefault = loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026';
+      const isUserPasswordMatch = targetUser && (
+        (targetUser.senha_provisoria && targetUser.senha_provisoria === loginSenha) ||
+        (!targetUser.senha_provisoria && loginSenha === 'roma2026')
+      );
+
+      if (isMasterDefault || isUserPasswordMatch) {
         setIsAuthenticated(true);
         sessionStorage.setItem('roma_erp_auth', 'true');
         sessionStorage.setItem('roma_erp_user_email', loginEmail);
         setLoginErro('');
+
+        if (targetUser && targetUser.precisa_trocar_senha) {
+          setModalTrocaSenha(true);
+        }
       } else {
         setLoginErro('Credenciais inválidas. Verifique seu e-mail e senha.');
       }
@@ -148,6 +156,7 @@ export default function RomaErpPage() {
   // New User Form & Edit User Modal
   const [newUsrNome, setNewUsrNome] = useState('');
   const [newUsrEmail, setNewUsrEmail] = useState('');
+  const [newUsrSenhaProv, setNewUsrSenhaProv] = useState('Roma@2026');
   const [newUsrNivel, setNewUsrNivel] = useState<RomaUsuario['nivel_acesso']>('Vendedor');
   const [newUsrPerms, setNewUsrPerms] = useState<PermissoesAbas>({
     dashboard: true,
@@ -160,6 +169,12 @@ export default function RomaErpPage() {
     configuracoes: false,
   });
   const [editingUsr, setEditingUsr] = useState<RomaUsuario | null>(null);
+
+  // Modal para troca de senha obrigatória no primeiro login
+  const [modalTrocaSenha, setModalTrocaSenha] = useState(false);
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmaNovaSenha, setConfirmaNovaSenha] = useState('');
+  const [erroTrocaSenha, setErroTrocaSenha] = useState('');
 
   const fmt = (v: number) =>
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -215,10 +230,13 @@ export default function RomaErpPage() {
   const handleAddUsuario = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newUsrNome.trim() || !newUsrEmail.trim()) return;
+    const senhaInicial = newUsrSenhaProv.trim() || 'Roma@2026';
     salvarUsuario({
       id: `usr-${Date.now()}`,
       nome: newUsrNome.trim(),
       email: newUsrEmail.trim().toLowerCase(),
+      senha_provisoria: senhaInicial,
+      precisa_trocar_senha: true,
       nivel_acesso: newUsrNivel,
       permissoes_abas: newUsrPerms,
       ativo: true,
@@ -226,7 +244,8 @@ export default function RomaErpPage() {
     });
     setNewUsrNome('');
     setNewUsrEmail('');
-    alert(`Usuário ${newUsrNome.trim()} cadastrado! Habilitado com perfil ${newUsrNivel}.`);
+    setNewUsrSenhaProv('Roma@2026');
+    alert(`Usuário cadastrado com sucesso!\n\nE-mail: ${newUsrEmail.trim().toLowerCase()}\nSenha provisória: ${senhaInicial}\n\nO usuário deverá alterar a senha no primeiro acesso.`);
   };
 
   const handleUpdateUsuario = (e: React.FormEvent) => {
@@ -235,6 +254,43 @@ export default function RomaErpPage() {
     salvarUsuario(editingUsr);
     setEditingUsr(null);
     alert(`Usuário ${editingUsr.nome} atualizado com sucesso!`);
+  };
+
+  const handleSalvarNovaSenha = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novaSenha || novaSenha.length < 6) {
+      setErroTrocaSenha('A nova senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
+    if (novaSenha !== confirmaNovaSenha) {
+      setErroTrocaSenha('As senhas digitadas não coincidem.');
+      return;
+    }
+
+    const currentEmail = sessionStorage.getItem('roma_erp_user_email') || loginEmail;
+    const target = usuarios.find((u) => u.email.toLowerCase() === currentEmail.toLowerCase());
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.auth.updateUser({ password: novaSenha });
+      } catch (err) {
+        console.error('Erro ao atualizar senha no Supabase:', err);
+      }
+    }
+
+    if (target) {
+      salvarUsuario({
+        ...target,
+        senha_provisoria: novaSenha,
+        precisa_trocar_senha: false,
+      });
+    }
+
+    setModalTrocaSenha(false);
+    setNovaSenha('');
+    setConfirmaNovaSenha('');
+    setErroTrocaSenha('');
+    alert('Senha alterada com sucesso! Você já pode utilizar o sistema com total segurança.');
   };
 
   const handleDeleteUsuario = (usr: RomaUsuario) => {
@@ -807,14 +863,20 @@ export default function RomaErpPage() {
                 onSubmit={handleAddUsuario}
                 className="space-y-4 rounded-2xl border border-zinc-800 bg-[#111111] p-5 text-xs"
               >
-                <p className="text-sm font-bold text-[#D4AF37]">Cadastrar Novo Usuário</p>
-                <div className="grid gap-3 md:grid-cols-3">
+                <div>
+                  <p className="text-sm font-bold text-[#D4AF37]">Cadastrar Novo Usuário</p>
+                  <p className="text-[11px] text-zinc-400">
+                    Defina o acesso e a senha provisória. No primeiro login, o sistema exigirá que o usuário crie uma nova senha pessoal.
+                  </p>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-4">
                   <input
                     required
                     placeholder="Nome"
                     value={newUsrNome}
                     onChange={(e) => setNewUsrNome(e.target.value)}
-                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
                   />
                   <input
                     required
@@ -822,12 +884,19 @@ export default function RomaErpPage() {
                     placeholder="E-mail"
                     value={newUsrEmail}
                     onChange={(e) => setNewUsrEmail(e.target.value)}
-                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
+                  />
+                  <input
+                    required
+                    placeholder="Senha Provisória"
+                    value={newUsrSenhaProv}
+                    onChange={(e) => setNewUsrSenhaProv(e.target.value)}
+                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white font-mono"
                   />
                   <select
                     value={newUsrNivel}
                     onChange={(e) => setNewUsrNivel(e.target.value as RomaUsuario['nivel_acesso'])}
-                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                    className="rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white"
                   >
                     <option value="Vendedor">Vendedor</option>
                     <option value="Gerente">Gerente</option>
@@ -859,9 +928,9 @@ export default function RomaErpPage() {
 
                 <button
                   type="submit"
-                  className="rounded-lg bg-[#D4AF37] px-5 py-2 font-bold text-black"
+                  className="rounded-lg bg-[#D4AF37] px-5 py-2 font-bold text-black hover:bg-[#E5C158] transition"
                 >
-                  Salvar Usuário
+                  Salvar Usuário & Gerar Acesso
                 </button>
               </form>
 
@@ -995,6 +1064,29 @@ export default function RomaErpPage() {
                         </div>
                       </div>
 
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-zinc-400 mb-1">Redefinir Senha Provisória</label>
+                          <input
+                            type="text"
+                            placeholder="Deixe em branco para manter a atual"
+                            value={editingUsr.senha_provisoria || ''}
+                            onChange={(e) => setEditingUsr({ ...editingUsr, senha_provisoria: e.target.value, precisa_trocar_senha: true })}
+                            className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2 text-white font-mono text-xs"
+                          />
+                        </div>
+                        <div className="flex items-end pb-1">
+                          <label className="flex items-center gap-2 text-zinc-300 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!!editingUsr.precisa_trocar_senha}
+                              onChange={(e) => setEditingUsr({ ...editingUsr, precisa_trocar_senha: e.target.checked })}
+                            />
+                            <span>Exigir troca de senha no próximo login</span>
+                          </label>
+                        </div>
+                      </div>
+
                       <div>
                         <p className="block text-zinc-400 mb-2">Permissões de Abas:</p>
                         <div className="grid grid-cols-2 gap-2">
@@ -1035,6 +1127,64 @@ export default function RomaErpPage() {
                           className="rounded-xl bg-[#D4AF37] px-5 py-2 font-bold text-black hover:bg-[#E5C158]"
                         >
                           Salvar Alterações
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Modal Obrigatório de Troca de Senha Provisória */}
+              {modalTrocaSenha && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+                  <div className="w-full max-w-md rounded-2xl border border-[#D4AF37] bg-[#121212] p-6 shadow-2xl">
+                    <div className="text-center pb-4 border-b border-zinc-800">
+                      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
+                        <Lock className="h-6 w-6" />
+                      </div>
+                      <h3 className="font-serif text-lg font-bold text-white">Cadastre sua Nova Senha</h3>
+                      <p className="mt-1 text-xs text-zinc-400">
+                        Por segurança, você está usando uma senha provisória e precisa cadastrar sua senha pessoal definitiva para continuar.
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleSalvarNovaSenha} className="mt-5 space-y-4 text-xs">
+                      {erroTrocaSenha && (
+                        <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2.5 text-center text-xs text-rose-400">
+                          {erroTrocaSenha}
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="block text-zinc-300 mb-1 font-semibold">Nova Senha</label>
+                        <input
+                          type="password"
+                          required
+                          placeholder="Mínimo de 6 caracteres"
+                          value={novaSenha}
+                          onChange={(e) => setNovaSenha(e.target.value)}
+                          className="w-full rounded-xl border border-zinc-700 bg-black px-4 py-2.5 text-white outline-none focus:border-[#D4AF37]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-zinc-300 mb-1 font-semibold">Confirmar Nova Senha</label>
+                        <input
+                          type="password"
+                          required
+                          placeholder="Repita a nova senha"
+                          value={confirmaNovaSenha}
+                          onChange={(e) => setConfirmaNovaSenha(e.target.value)}
+                          className="w-full rounded-xl border border-zinc-700 bg-black px-4 py-2.5 text-white outline-none focus:border-[#D4AF37]"
+                        />
+                      </div>
+
+                      <div className="pt-2">
+                        <button
+                          type="submit"
+                          className="w-full rounded-xl bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] py-3 text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110"
+                        >
+                          Gravar Senha e Liberar Painel
                         </button>
                       </div>
                     </form>

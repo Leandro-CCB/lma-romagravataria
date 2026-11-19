@@ -96,6 +96,8 @@ export interface RomaUsuario {
   id: string;
   nome: string;
   email: string;
+  senha_provisoria?: string;
+  precisa_trocar_senha?: boolean;
   nivel_acesso: 'Master' | 'Gerente' | 'Vendedor' | 'Editor';
   permissoes_abas: PermissoesAbas;
   ativo: boolean;

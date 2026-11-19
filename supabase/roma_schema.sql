@@ -75,9 +75,11 @@ CREATE TABLE IF NOT EXISTS roma_blog_posts (
 );
 
 CREATE TABLE IF NOT EXISTS roma_usuarios (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   nome TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
+  senha_provisoria TEXT,
+  precisa_trocar_senha BOOLEAN DEFAULT true,
   nivel_acesso TEXT NOT NULL DEFAULT 'Vendedor',
   permissoes_abas JSONB NOT NULL DEFAULT '{
     "dashboard": true,

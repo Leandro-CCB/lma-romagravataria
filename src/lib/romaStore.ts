@@ -263,8 +263,11 @@ export function useRomaStore() {
         id: usr.id,
         nome: usr.nome,
         email: usr.email,
+        senha_provisoria: usr.senha_provisoria,
+        precisa_trocar_senha: usr.precisa_trocar_senha,
         nivel_acesso: usr.nivel_acesso,
         permissoes_abas: usr.permissoes_abas,
+        ativo: usr.ativo,
       });
     }
   }, []);

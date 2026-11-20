@@ -64,6 +64,9 @@ export interface RomaVisita {
   origem_utm: string;
   dispositivo: 'Desktop' | 'Mobile';
   session_id: string;
+  produto_id?: string;
+  produto_nome?: string;
+  acao?: 'visita' | 'view_produto' | 'add_carrinho' | 'click_whatsapp';
   created_at: string;
 }
 
@@ -90,6 +93,15 @@ export interface RomaBlogPost {
   tempo_leitura: string;
   publicado: boolean;
   created_at: string;
+}
+
+export interface RomaConfiguracao {
+  id?: string;
+  whatsapp_numero: string; // Ex: 5511999998888
+  whatsapp_display: string; // Ex: (11) 99999-8888
+  mensagem_padrao_atendente: string; // "Olá, vim do site e gostaria de saber mais sobre..."
+  comissao_padrao_percentual: number; // Ex: 12
+  updated_at?: string;
 }
 
 export interface RomaUsuario {

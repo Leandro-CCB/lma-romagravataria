@@ -106,6 +106,15 @@ CREATE POLICY "roma_imagens_public_read" ON storage.objects
 CREATE POLICY "roma_imagens_public_insert" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'roma-imagens');
 
+CREATE TABLE IF NOT EXISTS roma_configuracoes (
+  id TEXT PRIMARY KEY DEFAULT 'config-default',
+  whatsapp_numero TEXT NOT NULL DEFAULT '5511999998888',
+  whatsapp_display TEXT NOT NULL DEFAULT '(11) 99999-8888',
+  mensagem_padrao_atendente TEXT NOT NULL DEFAULT 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:',
+  comissao_padrao_percentual NUMERIC(5,2) NOT NULL DEFAULT 12.00,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Trigger para sincronizar auth.users com roma_usuarios
 CREATE OR REPLACE FUNCTION public.handle_roma_auth_user()
 RETURNS trigger AS $$

@@ -16,6 +16,7 @@ import {
   BookOpen,
   ArrowRight,
   Lock,
+  MessageSquare,
 } from 'lucide-react';
 import { useRomaStore } from '@/lib/romaStore';
 import { RomaProduto, RomaItemPedido, RomaBlogPost } from '@/types/roma';
@@ -31,7 +32,7 @@ const CATEGORIES = [
 ] as const;
 
 export default function RomaStorePage() {
-  const { produtos, blogPosts, registrarVisita, adicionarLead, criarPedido } = useRomaStore();
+  const { produtos, blogPosts, registrarVisita, adicionarLead, criarPedido, config } = useRomaStore();
 
   const [categoria, setCategoria] = useState<string>('Todos');
   const [busca, setBusca] = useState('');
@@ -90,6 +91,11 @@ export default function RomaStorePage() {
           preco_unitario: prod.preco,
         },
       ];
+    });
+    registrarVisita(`/produto/${prod.slug}`, {
+      produto_id: prod.id,
+      produto_nome: prod.nome,
+      acao: 'add_carrinho',
     });
     setCartOpen(true);
   };
@@ -365,12 +371,39 @@ export default function RomaStorePage() {
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => addToCart(prod)}
-                      className="mt-3 w-full rounded-xl bg-[#D4AF37] py-2.5 text-xs font-bold uppercase tracking-wider text-black transition hover:bg-[#E5C158]"
-                    >
-                      Comprar Agora
-                    </button>
+                    <div className="mt-3 flex items-center gap-2">
+                      <a
+                        href={`https://wa.me/${(config?.whatsapp_numero || '5511999998888').replace(/\D/g, '')}?text=${encodeURIComponent(
+                          `${config?.mensagem_padrao_atendente || 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:'} Tenho interesse no produto "${prod.nome}".`
+                        )}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() =>
+                          registrarVisita(`/produto/${prod.slug}`, {
+                            produto_id: prod.id,
+                            produto_nome: prod.nome,
+                            acao: 'click_whatsapp',
+                          })
+                        }
+                        title="Dúvidas no WhatsApp"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 transition hover:bg-emerald-500 hover:text-black"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </a>
+                      <button
+                        onClick={() => {
+                          addToCart(prod);
+                          registrarVisita(`/produto/${prod.slug}`, {
+                            produto_id: prod.id,
+                            produto_nome: prod.nome,
+                            acao: 'view_produto',
+                          });
+                        }}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-[#C5A028] via-[#D4AF37] to-[#E5C158] py-2.5 text-xs font-bold uppercase tracking-wider text-black shadow-lg shadow-[#D4AF37]/20 transition hover:brightness-110 active:scale-95"
+                      >
+                        Comprar Agora
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -457,6 +490,19 @@ export default function RomaStorePage() {
                 <li>Segunda a Sexta: 08h às 18h</li>
                 <li>Sábados: 08h às 13h</li>
                 <li className="text-[#D4AF37] font-semibold">Envio para todo o Brasil</li>
+                <li className="pt-1">
+                  <a
+                    href={`https://wa.me/${(config?.whatsapp_numero || '5511999998888').replace(/\D/g, '')}?text=${encodeURIComponent(
+                      `${config?.mensagem_padrao_atendente || 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:'} Gostaria de atendimento via WhatsApp.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 font-bold text-emerald-400 hover:text-emerald-300"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    <span>WhatsApp: {config?.whatsapp_display || '(11) 99999-8888'}</span>
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -689,7 +735,11 @@ export default function RomaStorePage() {
         </div>
       )}
 
-      <RomaBot onCaptureLead={adicionarLead} />
+      <RomaBot
+        onCaptureLead={adicionarLead}
+        whatsappNumero={config?.whatsapp_numero}
+        mensagemPadrao={config?.mensagem_padrao_atendente}
+      />
     </div>
   );
 }

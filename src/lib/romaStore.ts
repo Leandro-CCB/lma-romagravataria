@@ -17,7 +17,16 @@ import {
   RomaLead,
   RomaBlogPost,
   RomaUsuario,
+  RomaConfiguracao,
 } from '@/types/roma';
+
+export const CONFIG_PADRAO: RomaConfiguracao = {
+  id: 'config-default',
+  whatsapp_numero: '5511999998888',
+  whatsapp_display: '(11) 99999-8888',
+  mensagem_padrao_atendente: 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:',
+  comissao_padrao_percentual: 12,
+};
 
 const KEYS = {
   produtos: 'roma_produtos_v1',
@@ -26,6 +35,7 @@ const KEYS = {
   leads: 'roma_leads_v1',
   blog: 'roma_blog_v1',
   usuarios: 'roma_usuarios_v1',
+  config: 'roma_config_v1',
 };
 
 function loadLocal<T>(key: string, fallback: T[]): T[] {
@@ -58,6 +68,7 @@ export function useRomaStore() {
   const [leads, setLeads] = useState<RomaLead[]>(INITIAL_LEADS);
   const [blogPosts, setBlogPosts] = useState<RomaBlogPost[]>(INITIAL_BLOG);
   const [usuarios, setUsuarios] = useState<RomaUsuario[]>(INITIAL_USUARIOS);
+  const [config, setConfig] = useState<RomaConfiguracao>(CONFIG_PADRAO);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -67,6 +78,12 @@ export function useRomaStore() {
     setLeads(loadLocal(KEYS.leads, INITIAL_LEADS));
     setBlogPosts(loadLocal(KEYS.blog, INITIAL_BLOG));
     setUsuarios(loadLocal(KEYS.usuarios, INITIAL_USUARIOS));
+    if (typeof window !== 'undefined') {
+      try {
+        const rawCfg = localStorage.getItem(KEYS.config);
+        if (rawCfg) setConfig(JSON.parse(rawCfg));
+      } catch {}
+    }
     setReady(true);
 
     if (isSupabaseConfigured && supabase) {
@@ -106,33 +123,47 @@ export function useRomaStore() {
     }
   }, []);
 
-  const registrarVisita = useCallback((pagina: string) => {
-    if (typeof window === 'undefined') return;
-    const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-    const params = new URLSearchParams(window.location.search);
-    const utm = params.get('utm_source') || params.get('utm_campaign') || 'Direto';
-    const nova: RomaVisita = {
-      id: `vis-${Date.now()}`,
-      pagina,
-      origem_utm: utm,
-      dispositivo: isMobile ? 'Mobile' : 'Desktop',
-      session_id: `sess-${Math.random().toString(36).slice(2, 8)}`,
-      created_at: new Date().toISOString(),
-    };
-    setVisitas((prev) => {
-      const next = [nova, ...prev].slice(0, 300);
-      saveLocal(KEYS.visitas, next);
-      return next;
-    });
-    if (isSupabaseConfigured && supabase) {
-      supabase.from('roma_visitas').insert({
-        pagina: nova.pagina,
-        origem_utm: nova.origem_utm,
-        dispositivo: nova.dispositivo,
-        session_id: nova.session_id,
+  const registrarVisita = useCallback(
+    (
+      pagina: string,
+      extras?: {
+        origem_utm?: string;
+        produto_id?: string;
+        produto_nome?: string;
+        acao?: 'visita' | 'view_produto' | 'add_carrinho' | 'click_whatsapp';
+      }
+    ) => {
+      if (typeof window === 'undefined') return;
+      const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+      const params = new URLSearchParams(window.location.search);
+      const utm = extras?.origem_utm || params.get('utm_source') || params.get('utm_campaign') || 'Direto';
+      const nova: RomaVisita = {
+        id: `vis-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        pagina,
+        origem_utm: utm,
+        dispositivo: isMobile ? 'Mobile' : 'Desktop',
+        session_id: `sess-${Math.random().toString(36).slice(2, 8)}`,
+        produto_id: extras?.produto_id,
+        produto_nome: extras?.produto_nome,
+        acao: extras?.acao || 'visita',
+        created_at: new Date().toISOString(),
+      };
+      setVisitas((prev) => {
+        const next = [nova, ...prev].slice(0, 500);
+        saveLocal(KEYS.visitas, next);
+        return next;
       });
-    }
-  }, []);
+      if (isSupabaseConfigured && supabase) {
+        supabase.from('roma_visitas').insert({
+          pagina: nova.pagina,
+          origem_utm: nova.origem_utm,
+          dispositivo: nova.dispositivo,
+          session_id: nova.session_id,
+        });
+      }
+    },
+    []
+  );
 
   const adicionarLead = useCallback((lead: Omit<RomaLead, 'id' | 'created_at' | 'status'>) => {
     const novo: RomaLead = {
@@ -173,7 +204,7 @@ export function useRomaStore() {
 
   const criarPedido = useCallback(
     (pedido: Omit<RomaPedido, 'id' | 'numero_pedido' | 'created_at' | 'comissao_percentual' | 'comissao_valor' | 'comissao_paga'>) => {
-      const comissaoPct = 12;
+      const comissaoPct = config.comissao_padrao_percentual || 12;
       const comissaoVal = Number(((pedido.total * comissaoPct) / 100).toFixed(2));
       const novo: RomaPedido = {
         ...pedido,
@@ -211,7 +242,7 @@ export function useRomaStore() {
       }
       return novo;
     },
-    []
+    [config.comissao_padrao_percentual]
   );
 
   const atualizarPedidoStatus = useCallback((id: string, status: RomaPedido['status']) => {
@@ -249,6 +280,25 @@ export function useRomaStore() {
       saveLocal(KEYS.blog, next);
       return next;
     });
+  }, []);
+
+  const salvarConfiguracao = useCallback((novaConfig: Partial<RomaConfiguracao>) => {
+    setConfig((prev) => {
+      const merged: RomaConfiguracao = { ...prev, ...novaConfig };
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(KEYS.config, JSON.stringify(merged));
+        } catch {}
+      }
+      return merged;
+    });
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('roma_configuracoes').upsert({
+        id: 'config-default',
+        ...novaConfig,
+        updated_at: new Date().toISOString(),
+      });
+    }
   }, []);
 
   const salvarUsuario = useCallback((usr: RomaUsuario) => {
@@ -291,6 +341,8 @@ export function useRomaStore() {
     leads,
     blogPosts,
     usuarios,
+    config,
+    salvarConfiguracao,
     registrarVisita,
     adicionarLead,
     atualizarLeadStatus,

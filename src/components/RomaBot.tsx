@@ -10,21 +10,29 @@ interface RomaBotProps {
     interesse: string;
     origem: 'Bot Especialista';
   }) => void;
+  whatsappNumero?: string;
+  mensagemPadrao?: string;
 }
 
 interface Msg {
   from: 'bot' | 'user';
   text: string;
+  actionUrl?: string;
+  actionLabel?: string;
 }
 
 const QUICK_QUESTIONS = [
   'Qual gravata escolher para casamento?',
+  'Camisas de Fibra de Bambu são boas?',
   'Como funciona o Kit Padrinhos?',
-  'Qual o prazo e frete grátis?',
-  'Falar com consultor no WhatsApp',
+  'Falar com um atendente agora',
 ];
 
-export default function RomaBot({ onCaptureLead }: RomaBotProps) {
+export default function RomaBot({
+  onCaptureLead,
+  whatsappNumero = '5511999998888',
+  mensagemPadrao = 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:',
+}: RomaBotProps) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     {
@@ -53,9 +61,24 @@ export default function RomaBot({ onCaptureLead }: RomaBotProps) {
     } else if (lower.includes('bambu') || lower.includes('camisa')) {
       reply =
         'Nossas Camisas em Fibra de Bambu têm toque sedoso, controle térmico natural e quase não amassam. Temos tamanhos do 1 ao 6 nas cores Branco, Preto, Azul Serenity, Cinza e Marinho.';
-    } else if (lower.includes('whatsapp') || lower.includes('consultor') || lower.includes('falar')) {
-      reply = 'Perfeito! Preencha seu nome e WhatsApp abaixo que nosso especialista te chama agora mesmo.';
+    } else if (lower.includes('whatsapp') || lower.includes('consultor') || lower.includes('falar') || lower.includes('atendente')) {
+      const cleanNum = (whatsappNumero || '5511999998888').replace(/\D/g, '');
+      const encodedMsg = encodeURIComponent(`${mensagemPadrao || 'Olá! Vim do site Roma Gravataria e quero falar com um atendente:'} ${texto}`);
+      const directWaUrl = `https://wa.me/${cleanNum}?text=${encodedMsg}`;
+      
+      reply = `Perfeito! Você pode falar diretamente com nossa equipe no WhatsApp agora pelo botão abaixo ou deixar seu contato para nós te chamarmos:`;
       setShowLeadForm(true);
+      setMessages((prev) => [
+        ...prev,
+        { from: 'user', text: texto },
+        {
+          from: 'bot',
+          text: reply,
+          actionUrl: directWaUrl,
+          actionLabel: 'Abrir WhatsApp do Atendente 💬',
+        },
+      ]);
+      return;
     }
 
     setMessages((prev) => [...prev, { from: 'user', text: texto }, { from: 'bot', text: reply }]);
@@ -121,7 +144,7 @@ export default function RomaBot({ onCaptureLead }: RomaBotProps) {
           {/* Messages */}
           <div className="flex-1 space-y-3 overflow-y-auto p-4 text-xs">
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div key={i} className={`flex flex-col ${m.from === 'user' ? 'items-end' : 'items-start'}`}>
                 <div
                   className={`max-w-[85%] rounded-xl px-3.5 py-2.5 leading-relaxed ${
                     m.from === 'user'
@@ -131,6 +154,16 @@ export default function RomaBot({ onCaptureLead }: RomaBotProps) {
                 >
                   {m.text}
                 </div>
+                {m.actionUrl && (
+                  <a
+                    href={m.actionUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-md hover:bg-emerald-500"
+                  >
+                    <span>{m.actionLabel || 'Chamar Atendente'}</span>
+                  </a>
+                )}
               </div>
             ))}
 

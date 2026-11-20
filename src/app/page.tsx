@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   BookOpen,
   ArrowRight,
-  Lock,
   MessageSquare,
 } from 'lucide-react';
 import { useRomaStore } from '@/lib/romaStore';
@@ -457,7 +456,7 @@ export default function RomaStorePage() {
       {/* Footer */}
       <footer className="border-t border-[#D4AF37]/20 bg-[#050505] py-12 text-zinc-400">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 pb-8 border-b border-zinc-900">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 pb-8 border-b border-zinc-900">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <img
@@ -504,20 +503,6 @@ export default function RomaStorePage() {
                   </a>
                 </li>
               </ul>
-            </div>
-
-            <div className="space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-white">Gestão Interna</p>
-              <p className="text-xs text-zinc-500">
-                Acesso exclusivo para administradores e equipe de vendas Roma.
-              </p>
-              <Link
-                href="/erp"
-                className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#121212] px-4 py-2.5 text-xs font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
-              >
-                <Lock className="h-3.5 w-3.5" />
-                <span>Área do Administrador</span>
-              </Link>
             </div>
           </div>
 

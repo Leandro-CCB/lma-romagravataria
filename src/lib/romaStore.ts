@@ -52,13 +52,8 @@ function loadLocal<T>(key: string, fallback: T[]): T[] {
   }
 }
 
-function saveLocal<T>(key: string, data: T[]) {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // ignore quota errors
-  }
+function saveLocal<T>(_key: string, _data: T[]) {
+  // Persistência exclusiva via Supabase (sem localStorage)
 }
 
 export function useRomaStore() {
@@ -72,18 +67,6 @@ export function useRomaStore() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setProdutos(loadLocal(KEYS.produtos, INITIAL_PRODUTOS));
-    setPedidos(loadLocal(KEYS.pedidos, INITIAL_PEDIDOS));
-    setVisitas(loadLocal(KEYS.visitas, INITIAL_VISITAS));
-    setLeads(loadLocal(KEYS.leads, INITIAL_LEADS));
-    setBlogPosts(loadLocal(KEYS.blog, INITIAL_BLOG));
-    setUsuarios(loadLocal(KEYS.usuarios, INITIAL_USUARIOS));
-    if (typeof window !== 'undefined') {
-      try {
-        const rawCfg = localStorage.getItem(KEYS.config);
-        if (rawCfg) setConfig(JSON.parse(rawCfg));
-      } catch {}
-    }
     setReady(true);
 
     if (isSupabaseConfigured && supabase) {
@@ -301,15 +284,13 @@ export function useRomaStore() {
     }
   }, []);
 
-  const salvarUsuario = useCallback((usr: RomaUsuario) => {
+  const salvarUsuario = useCallback(async (usr: RomaUsuario) => {
     setUsuarios((prev) => {
       const exists = prev.some((u) => u.id === usr.id);
-      const next = exists ? prev.map((u) => (u.id === usr.id ? usr : u)) : [...prev, usr];
-      saveLocal(KEYS.usuarios, next);
-      return next;
+      return exists ? prev.map((u) => (u.id === usr.id ? usr : u)) : [...prev, usr];
     });
     if (isSupabaseConfigured && supabase) {
-      supabase.from('roma_usuarios').upsert({
+      const { error } = await supabase.from('roma_usuarios').upsert({
         id: usr.id,
         nome: usr.nome,
         email: usr.email,
@@ -319,17 +300,19 @@ export function useRomaStore() {
         permissoes_abas: usr.permissoes_abas,
         ativo: usr.ativo,
       });
+      if (error) {
+        console.error('[Roma] Erro ao salvar usuário no Supabase:', error.message);
+      }
     }
   }, []);
 
-  const excluirUsuario = useCallback((id: string) => {
-    setUsuarios((prev) => {
-      const next = prev.filter((u) => u.id !== id);
-      saveLocal(KEYS.usuarios, next);
-      return next;
-    });
+  const excluirUsuario = useCallback(async (id: string) => {
+    setUsuarios((prev) => prev.filter((u) => u.id !== id));
     if (isSupabaseConfigured && supabase) {
-      supabase.from('roma_usuarios').delete().eq('id', id);
+      const { error } = await supabase.from('roma_usuarios').delete().eq('id', id);
+      if (error) {
+        console.error('[Roma] Erro ao excluir usuário no Supabase:', error.message);
+      }
     }
   }, []);
 

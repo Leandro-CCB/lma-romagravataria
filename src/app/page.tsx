@@ -459,28 +459,14 @@ export default function RomaStorePage() {
         </div>
       </section>
 
-      {/* Nossa História & Card Site Seguro */}
+      {/* Nossa História */}
       <section id="nossa-historia" className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="md:col-span-2 rounded-2xl border border-[#D4AF37]/20 bg-[var(--card)] p-6 space-y-3">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37]">Tradição &amp; Elegância</p>
-            <h2 className="font-editorial text-2xl font-bold text-[var(--foreground)]">Nossa História</h2>
-            <p className="text-xs leading-relaxed text-[var(--muted)]">
-              A Roma Gravataria nasceu com o propósito de unir alfaiataria clássica, tecidos selecionados e atendimento personalizado para noivos, padrinhos e executivos que valorizam presença e sofisticação em cada detalhe.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-6 flex flex-col justify-between space-y-3">
-            <div className="flex items-center gap-2 text-emerald-400">
-              <span className="text-xl">🔒</span>
-              <h3 className="text-sm font-bold uppercase tracking-wider">Site Seguro</h3>
-            </div>
-            <p className="text-xs leading-relaxed text-[var(--muted)]">
-              Navegação protegida por criptografia SSL 256-bit. Seus dados e pedidos são tratados com total sigilo e segurança.
-            </p>
-            <div className="text-[11px] font-semibold text-emerald-400">
-              ✓ Certificado SSL Ativo • Compra Protegida
-            </div>
-          </div>
+        <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--card)] p-6 space-y-3">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37]">Tradição &amp; Elegância</p>
+          <h2 className="font-editorial text-2xl font-bold text-[var(--foreground)]">Nossa História</h2>
+          <p className="text-xs leading-relaxed text-[var(--muted)]">
+            A Roma Gravataria nasceu com o propósito de unir alfaiataria clássica, tecidos selecionados e atendimento personalizado para noivos, padrinhos e executivos que valorizam presença e sofisticação em cada detalhe.
+          </p>
         </div>
       </section>
 
@@ -499,6 +485,10 @@ export default function RomaStorePage() {
                   <p className="font-serif font-black tracking-widest text-[#D4AF37]">ROMA</p>
                   <p className="text-[10px] tracking-wider text-zinc-500 uppercase">Moda Social Masculina</p>
                 </div>
+              </div>
+              <div className="inline-flex items-center gap-2.5 rounded-lg border border-emerald-700/40 bg-[#e8f0ea] px-3.5 py-2 text-emerald-800 shadow-sm">
+                <span className="text-lg leading-none">🔒</span>
+                <span className="text-xs font-extrabold uppercase tracking-wider">SITE SEGURO</span>
               </div>
               <p className="text-xs text-[var(--muted)] leading-relaxed">
                 Referência em gravatas slim, tradicionais, camisas de bambu e alfaiataria fina para eventos e casamentos.

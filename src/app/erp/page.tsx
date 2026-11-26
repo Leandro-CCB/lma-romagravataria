@@ -1426,27 +1426,37 @@ export default function RomaErpPage() {
                         placeholder="Estoque"
                       />
                     </div>
-                    <div>
-                      <label className="mb-1 block text-zinc-400">
-                        Foto (otimizada automaticamente para WebP)
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          setUploadingImg(true);
-                          try {
-                            const url = await compressAndUploadImage(file, 'produtos');
-                            setEditingProd((prev) => (prev ? { ...prev, imagem_url: url } : null));
-                          } finally {
-                            setUploadingImg(false);
-                          }
-                        }}
-                        className="w-full text-zinc-300"
-                      />
-                      {uploadingImg && <p className="mt-1 text-[#D4AF37]">Comprimindo e enviando...</p>}
+                    <div className="rounded-xl border border-dashed border-[#D4AF37]/40 bg-black/50 p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-zinc-300">Foto (otimizada p/ WebP)</span>
+                        <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg bg-[#D4AF37] px-3 py-1.5 text-[11px] font-bold text-black hover:brightness-110 transition">
+                          <span>📷 Enviar Foto</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setUploadingImg(true);
+                              try {
+                                const url = await compressAndUploadImage(file, 'produtos');
+                                setEditingProd((prev) => (prev ? { ...prev, imagem_url: url } : null));
+                              } finally {
+                                setUploadingImg(false);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
+                      {editingProd.imagem_url && (
+                        <img
+                          src={editingProd.imagem_url}
+                          alt={editingProd.nome}
+                          className="h-16 w-16 rounded-lg object-cover border border-zinc-700"
+                        />
+                      )}
+                      {uploadingImg && <p className="text-[11px] text-[#D4AF37]">Comprimindo e enviando...</p>}
                     </div>
                     <textarea
                       rows={3}

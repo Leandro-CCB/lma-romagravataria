@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-:root,
-html[data-theme="light"] {
+:root {
   --background: #F6F4EF;
   --surface: #FFFFFF;
   --surface-alt: #EFECE5;
@@ -10,17 +9,6 @@ html[data-theme="light"] {
   --border: #DFDBD2;
   --accent: #184E45;
   --accent-hover: #113831;
-}
-
-html[data-theme="dark"] {
-  --background: #0B0C10;
-  --surface: #14161F;
-  --surface-alt: #1A1D28;
-  --foreground: #F8FAFC;
-  --muted: #94A3B8;
-  --border: rgba(255, 255, 255, 0.1);
-  --accent: #D4AF37;
-  --accent-hover: #B8962E;
 }
 
 @theme inline {
@@ -34,7 +22,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .font-editorial {

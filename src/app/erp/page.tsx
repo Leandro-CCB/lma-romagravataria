@@ -108,8 +108,9 @@ export default function RomaErpPage() {
       }
 
       // 2. Validação por usuário cadastrado no sistema
-      const targetUser = usuarios.find((u) => u.email.toLowerCase() === loginEmail.toLowerCase().trim());
-      const isMasterDefault = loginEmail === 'admin@roma.com.br' && loginSenha === 'roma2026';
+      const cleanEmail = loginEmail.toLowerCase().trim();
+      const targetUser = usuarios.find((u) => u.email.toLowerCase().trim() === cleanEmail);
+      const isMasterDefault = cleanEmail === 'admin@roma.com.br' && loginSenha === 'roma2026';
       const isUserPasswordMatch = targetUser && (
         (targetUser.senha_provisoria && targetUser.senha_provisoria === loginSenha) ||
         (!targetUser.senha_provisoria && loginSenha === 'roma2026')
@@ -205,24 +206,6 @@ export default function RomaErpPage() {
   const [leadModal, setLeadModal] = useState<{ id: string; nome: string; zap: string; nota: string } | null>(null);
 
   // Estados para Configuração de WhatsApp e Comissão Geral
-  const [storeTheme, setStoreTheme] = useState<'light' | 'dark'>('light');
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('roma_theme');
-      if (saved === 'dark' || saved === 'light') {
-        setStoreTheme(saved);
-        document.documentElement.setAttribute('data-theme', saved);
-      }
-    } catch {}
-  }, []);
-
-  const toggleStoreTheme = (nextTheme: 'light' | 'dark') => {
-    setStoreTheme(nextTheme);
-    try {
-      localStorage.setItem('roma_theme', nextTheme);
-      document.documentElement.setAttribute('data-theme', nextTheme);
-    } catch {}
-  };
   const [formZapNumero, setFormZapNumero] = useState(config?.whatsapp_numero || '5511999998888');
   const [formZapDisplay, setFormZapDisplay] = useState(config?.whatsapp_display || '(11) 99999-8888');
   const [formZapMsg, setFormZapMsg] = useState(
@@ -2006,40 +1989,6 @@ export default function RomaErpPage() {
           {currentTab === 'configuracoes' && (
             <div className="space-y-6">
               <h1 className="text-2xl font-bold">Configurações Gerais, WhatsApp & Usuários</h1>
-
-              {/* CARD DE TEMA DA LOJA (CLARO / DARK) */}
-              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-[#121212] p-5 text-xs">
-                <div>
-                  <p className="text-sm font-bold text-white">Aparência da Loja Pública</p>
-                  <p className="text-[11px] text-zinc-400 mt-0.5">
-                    Alterne entre o visual Editorial Claro (padrão) e o Modo Dark na vitrine da Roma Gravataria.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950 p-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleStoreTheme('light')}
-                    className={`rounded-lg px-3.5 py-2 font-semibold transition ${
-                      storeTheme === 'light'
-                        ? 'bg-[#F6F4EF] text-[#171614]'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    Editorial Claro
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleStoreTheme('dark')}
-                    className={`rounded-lg px-3.5 py-2 font-semibold transition ${
-                      storeTheme === 'dark'
-                        ? 'bg-[#D4AF37] text-black'
-                        : 'text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    Dark
-                  </button>
-                </div>
-              </div>
 
               {/* CARD DE CONFIGURAÇÃO DO WHATSAPP DE ATENDIMENTO E COMISSÕES */}
               <form

@@ -302,6 +302,7 @@ export function useRomaStore() {
       });
       if (error) {
         console.error('[Roma] Erro ao salvar usuário no Supabase:', error.message);
+        alert('Erro ao salvar usuário no Supabase: ' + error.message);
       }
     }
   }, []);

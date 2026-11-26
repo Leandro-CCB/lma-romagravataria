@@ -165,7 +165,7 @@ export default function RomaStorePage() {
             </div>
           </Link>
 
-          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-[var(--border)] bg-[#121212] px-4 py-2.5 md:flex">
+          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 md:flex">
             <Search className="h-4 w-4 text-[var(--muted)]" />
             <input
               type="text"
@@ -268,7 +268,7 @@ export default function RomaStorePage() {
                 className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                   categoria === cat
                     ? 'bg-[#D4AF37] text-black'
-                    : 'border border-[var(--border)] bg-[#121212] text-[var(--muted)] hover:border-[#D4AF37]/50'
+                    : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:border-[#D4AF37]/50'
                 }`}
               >
                 {cat}
@@ -428,7 +428,7 @@ export default function RomaStorePage() {
                 <div
                   key={post.id}
                   onClick={() => setActivePost(post)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[#121212] transition hover:border-[#D4AF37]/50 md:flex"
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] transition hover:border-[#D4AF37]/50 md:flex"
                 >
                   <img
                     src={post.imagem_url}
@@ -531,7 +531,7 @@ export default function RomaStorePage() {
                 cart.map((item, idx) => (
                   <div
                     key={`${item.produto_id}-${item.cor}-${item.tamanho}`}
-                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[#151515] p-3"
+                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] p-3"
                   >
                     <div>
                       <p className="text-sm font-semibold">{item.nome}</p>
@@ -545,14 +545,14 @@ export default function RomaStorePage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => updateQty(idx, -1)}
-                        className="rounded-md border border-[var(--border)] p-1 hover:bg-zinc-800"
+                        className="rounded-md border border-[var(--border)] p-1 hover:bg-[var(--surface-alt)]"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="text-xs font-bold">{item.quantidade}</span>
                       <button
                         onClick={() => updateQty(idx, 1)}
-                        className="rounded-md border border-[var(--border)] p-1 hover:bg-zinc-800"
+                        className="rounded-md border border-[var(--border)] p-1 hover:bg-[var(--surface-alt)]"
                       >
                         <Plus className="h-3 w-3" />
                       </button>

@@ -137,14 +137,14 @@ export default function RomaStorePage() {
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[var(--foreground)] selection:bg-[#D4AF37] selection:text-black">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[#D4AF37] selection:text-black">
       {/* Top Announcement Bar */}
-      <div className="border-b border-[#D4AF37]/20 bg-[var(--surface-alt)] px-4 py-2 text-center text-xs font-medium text-[#E5C158]">
+      <div className="border-b border-[var(--border)] bg-[var(--surface-alt)] px-4 py-2 text-center text-xs font-medium text-[#E5C158]">
         FRETE GRÁTIS acima de R$ 299 para todo o Brasil • 4% OFF no Pix • Parcele em até 6x sem juros
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-[#D4AF37]/30 bg-[#060606]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:py-4">
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative flex items-center justify-center">
@@ -228,22 +228,22 @@ export default function RomaStorePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
               <Truck className="mb-3 h-6 w-6 text-[#D4AF37]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Frete Grátis</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Em compras acima de R$ 299 para todo o Brasil</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
               <CreditCard className="mb-3 h-6 w-6 text-[#D4AF37]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Até 6x Sem Juros</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Ou 4% de desconto imediato no Pix</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
               <ShieldCheck className="mb-3 h-6 w-6 text-[#D4AF37]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Compra Segura</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Garantia de troca rápida e atendimento VIP</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
               <Award className="mb-3 h-6 w-6 text-[#D4AF37]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Padrão Roma</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Acabamento premium e caimento impecável</p>
@@ -321,7 +321,7 @@ export default function RomaStorePage() {
                               className={`rounded-md px-2 py-1 text-[11px] transition ${
                                 corAtual === c
                                   ? 'bg-[#D4AF37] font-bold text-black'
-                                  : 'border border-zinc-700 bg-black text-[var(--muted)] hover:border-zinc-500'
+                                  : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:border-zinc-500'
                               }`}
                             >
                               {c}
@@ -345,7 +345,7 @@ export default function RomaStorePage() {
                               className={`rounded-md px-2.5 py-1 text-[11px] transition ${
                                 tamAtual === t
                                   ? 'bg-[#D4AF37] font-bold text-black'
-                                  : 'border border-zinc-700 bg-black text-[var(--muted)] hover:border-zinc-500'
+                                  : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:border-zinc-500'
                               }`}
                             >
                               {t}
@@ -412,7 +412,7 @@ export default function RomaStorePage() {
       </section>
 
       {/* Blog de Moda Masculina */}
-      <section id="blog" className="border-t border-[var(--border)] bg-[#0C0C0C] py-14">
+      <section id="blog" className="border-t border-[var(--border)] bg-[var(--surface-alt)] py-14">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-8">
             <span className="text-xs font-semibold uppercase tracking-widest text-[#D4AF37]">
@@ -454,7 +454,7 @@ export default function RomaStorePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#D4AF37]/20 bg-[#050505] py-12 text-[var(--muted)]">
+      <footer className="border-t border-[var(--border)] bg-[var(--surface-alt)] py-12 text-[var(--muted)]">
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 pb-8 border-b border-[var(--border)]">
             <div className="space-y-3">
@@ -515,8 +515,8 @@ export default function RomaStorePage() {
 
       {/* Cart Drawer */}
       {cartOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm">
-          <div className="flex h-full w-full max-w-md flex-col border-l border-[#D4AF37]/30 bg-[#0E0E0E] p-5 text-[var(--foreground)]">
+        <div className="fixed inset-0 z-50 flex justify-end bg-[var(--surface)]/40 backdrop-blur-sm">
+          <div className="flex h-full w-full max-w-md flex-col border-l border-[var(--border)] bg-[var(--surface)] p-5 text-[var(--foreground)]">
             <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
               <h3 className="text-lg font-bold text-[#D4AF37]">Seu Carrinho</h3>
               <button onClick={() => setCartOpen(false)}>
@@ -545,14 +545,14 @@ export default function RomaStorePage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => updateQty(idx, -1)}
-                        className="rounded-md border border-zinc-700 p-1 hover:bg-zinc-800"
+                        className="rounded-md border border-[var(--border)] p-1 hover:bg-zinc-800"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="text-xs font-bold">{item.quantidade}</span>
                       <button
                         onClick={() => updateQty(idx, 1)}
-                        className="rounded-md border border-zinc-700 p-1 hover:bg-zinc-800"
+                        className="rounded-md border border-[var(--border)] p-1 hover:bg-zinc-800"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
@@ -590,7 +590,7 @@ export default function RomaStorePage() {
 
       {/* Checkout Modal */}
       {checkoutOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--surface)]/50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[var(--surface-alt)] p-6 text-[var(--foreground)]">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-[#D4AF37]">Finalizar Pedido Roma</h3>
@@ -620,7 +620,7 @@ export default function RomaStorePage() {
                   placeholder="Nome completo"
                   value={cliNome}
                   onChange={(e) => setCliNome(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <input
@@ -628,14 +628,14 @@ export default function RomaStorePage() {
                     placeholder="WhatsApp (com DDD)"
                     value={cliWhats}
                     onChange={(e) => setCliWhats(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                   />
                   <input
                     type="email"
                     placeholder="E-mail"
                     value={cliEmail}
                     onChange={(e) => setCliEmail(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
@@ -643,13 +643,13 @@ export default function RomaStorePage() {
                     placeholder="CEP"
                     value={cliCep}
                     onChange={(e) => setCliCep(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                   />
                   <input
                     placeholder="Endereço completo"
                     value={cliEndereco}
                     onChange={(e) => setCliEndereco(e.target.value)}
-                    className="col-span-2 w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                    className="col-span-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
@@ -658,7 +658,7 @@ export default function RomaStorePage() {
                   <select
                     value={formaPgto}
                     onChange={(e) => setFormaPgto(e.target.value as typeof formaPgto)}
-                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2.5 outline-none focus:border-[#D4AF37]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 outline-none focus:border-[#D4AF37]"
                   >
                     <option value="Pix">Pix (4% de desconto)</option>
                     <option value="Cartão de Crédito (até 6x)">Cartão de Crédito (até 6x sem juros)</option>
@@ -666,7 +666,7 @@ export default function RomaStorePage() {
                   </select>
                 </div>
 
-                <div className="rounded-xl border border-[var(--border)] bg-black p-3 space-y-1">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 space-y-1">
                   <div className="flex justify-between text-[var(--muted)]">
                     <span>Subtotal:</span>
                     <span>{fmt(subtotal)}</span>
@@ -697,7 +697,7 @@ export default function RomaStorePage() {
 
       {/* Blog Reader Modal */}
       {activePost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--surface)]/50 p-4 backdrop-blur-sm">
           <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#D4AF37]/40 bg-[var(--surface-alt)] p-6 text-[var(--foreground)]">
             <div className="mb-4 flex items-center justify-between">
               <span className="text-xs font-semibold uppercase text-[#D4AF37]">

@@ -33,13 +33,6 @@ export default function RootLayout({
       className={`${instrumentSerif.variable} ${plusJakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('roma_theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
-          }}
-        />
-      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root,
+html[data-theme="light"] {
+  --background: #F6F4EF;
+  --surface: #FFFFFF;
+  --surface-alt: #EFECE5;
+  --foreground: #171614;
+  --muted: #5C5952;
+  --border: #DFDBD2;
+  --accent: #184E45;
+  --accent-hover: #113831;
+}
+
+html[data-theme="dark"] {
+  --background: #0B0C10;
+  --surface: #14161F;
+  --surface-alt: #1A1D28;
+  --foreground: #F8FAFC;
+  --muted: #94A3B8;
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #D4AF37;
+  --accent-hover: #B8962E;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.font-editorial {
+  font-family: var(--font-serif), Georgia, serif;
 }

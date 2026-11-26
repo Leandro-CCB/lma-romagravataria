@@ -137,9 +137,9 @@ export default function RomaStorePage() {
     v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
-    <div className="min-h-screen bg-[#080808] text-zinc-100 selection:bg-[#D4AF37] selection:text-black">
+    <div className="min-h-screen bg-[#080808] text-[var(--foreground)] selection:bg-[#D4AF37] selection:text-black">
       {/* Top Announcement Bar */}
-      <div className="border-b border-[#D4AF37]/20 bg-[#111111] px-4 py-2 text-center text-xs font-medium text-[#E5C158]">
+      <div className="border-b border-[#D4AF37]/20 bg-[var(--surface-alt)] px-4 py-2 text-center text-xs font-medium text-[#E5C158]">
         FRETE GRÁTIS acima de R$ 299 para todo o Brasil • 4% OFF no Pix • Parcele em até 6x sem juros
       </div>
 
@@ -159,27 +159,27 @@ export default function RomaStorePage() {
               <span className="font-serif text-lg font-black tracking-widest text-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
                 ROMA
               </span>
-              <span className="text-[9px] font-semibold tracking-[0.25em] text-zinc-400 uppercase">
+              <span className="text-[9px] font-semibold tracking-[0.25em] text-[var(--muted)] uppercase">
                 Moda Social Masculina
               </span>
             </div>
           </Link>
 
-          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-zinc-800 bg-[#121212] px-4 py-2.5 md:flex">
-            <Search className="h-4 w-4 text-zinc-400" />
+          <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-[var(--border)] bg-[#121212] px-4 py-2.5 md:flex">
+            <Search className="h-4 w-4 text-[var(--muted)]" />
             <input
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar gravatas slim, camisas de bambu, kits..."
-              className="w-full bg-transparent text-xs text-white outline-none placeholder:text-zinc-500"
+              className="w-full bg-transparent text-xs text-[var(--foreground)] outline-none placeholder:text-zinc-500"
             />
           </div>
 
           <div className="flex items-center gap-4">
             <a
               href="#blog"
-              className="hidden items-center gap-1.5 text-xs font-semibold text-zinc-300 transition hover:text-[#D4AF37] sm:flex"
+              className="hidden items-center gap-1.5 text-xs font-semibold text-[var(--muted)] transition hover:text-[#D4AF37] sm:flex"
             >
               <BookOpen className="h-4 w-4" />
               <span>Blog</span>
@@ -203,10 +203,10 @@ export default function RomaStorePage() {
             <span className="inline-block rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#E5C158]">
               Alfaiataria & Moda Social Masculina
             </span>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
+            <h1 className="font-editorial text-4xl font-extrabold leading-tight tracking-tight text-[var(--foreground)] md:text-5xl">
               Elegância Imperial em Cada <span className="text-[#D4AF37]">Detalhe</span>.
             </h1>
-            <p className="max-w-lg text-sm leading-relaxed text-zinc-400">
+            <p className="max-w-lg text-sm leading-relaxed text-[var(--muted)]">
               Gravatas slim e tradicionais em seda jacquard, camisas em fibra de bambu e kits
               exclusivos para noivos e padrinhos.
             </p>
@@ -228,25 +228,25 @@ export default function RomaStorePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#111111] p-5">
+            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
               <Truck className="mb-3 h-6 w-6 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">Frete Grátis</p>
-              <p className="mt-1 text-xs text-zinc-400">Em compras acima de R$ 299 para todo o Brasil</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">Frete Grátis</p>
+              <p className="mt-1 text-xs text-[var(--muted)]">Em compras acima de R$ 299 para todo o Brasil</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#111111] p-5">
+            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
               <CreditCard className="mb-3 h-6 w-6 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">Até 6x Sem Juros</p>
-              <p className="mt-1 text-xs text-zinc-400">Ou 4% de desconto imediato no Pix</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">Até 6x Sem Juros</p>
+              <p className="mt-1 text-xs text-[var(--muted)]">Ou 4% de desconto imediato no Pix</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#111111] p-5">
+            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
               <ShieldCheck className="mb-3 h-6 w-6 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">Compra Segura</p>
-              <p className="mt-1 text-xs text-zinc-400">Garantia de troca rápida e atendimento VIP</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">Compra Segura</p>
+              <p className="mt-1 text-xs text-[var(--muted)]">Garantia de troca rápida e atendimento VIP</p>
             </div>
-            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#111111] p-5">
+            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[var(--surface-alt)] p-5">
               <Award className="mb-3 h-6 w-6 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">Padrão Roma</p>
-              <p className="mt-1 text-xs text-zinc-400">Acabamento premium e caimento impecável</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">Padrão Roma</p>
+              <p className="mt-1 text-xs text-[var(--muted)]">Acabamento premium e caimento impecável</p>
             </div>
           </div>
         </div>
@@ -256,8 +256,8 @@ export default function RomaStorePage() {
       <section id="catalogo" className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h2 className="text-2xl font-bold text-white">Mais Vendidos & Coleção</h2>
-            <p className="text-xs text-zinc-400">Escolha cor e tamanho diretamente no card</p>
+            <h2 className="font-editorial text-2xl font-bold text-[var(--foreground)]">Mais Vendidos & Coleção</h2>
+            <p className="text-xs text-[var(--muted)]">Escolha cor e tamanho diretamente no card</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -268,7 +268,7 @@ export default function RomaStorePage() {
                 className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                   categoria === cat
                     ? 'bg-[#D4AF37] text-black'
-                    : 'border border-zinc-800 bg-[#121212] text-zinc-300 hover:border-[#D4AF37]/50'
+                    : 'border border-[var(--border)] bg-[#121212] text-[var(--muted)] hover:border-[#D4AF37]/50'
                 }`}
               >
                 {cat}
@@ -284,9 +284,9 @@ export default function RomaStorePage() {
             return (
               <div
                 key={prod.id}
-                className="flex flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#111111] transition hover:border-[#D4AF37]/50"
+                className="flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] transition hover:border-[#D4AF37]/50"
               >
-                <div className="relative h-64 w-full overflow-hidden bg-zinc-900">
+                <div className="relative h-64 w-full overflow-hidden bg-[var(--surface)]">
                   <img
                     src={prod.imagem_url}
                     alt={prod.nome}
@@ -304,14 +304,14 @@ export default function RomaStorePage() {
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-[#D4AF37]">
                       {prod.categoria}
                     </p>
-                    <h3 className="mt-1 text-base font-bold text-white">{prod.nome}</h3>
-                    <p className="mt-1.5 line-clamp-2 text-xs text-zinc-400">{prod.descricao}</p>
+                    <h3 className="mt-1 text-base font-bold text-[var(--foreground)]">{prod.nome}</h3>
+                    <p className="mt-1.5 line-clamp-2 text-xs text-[var(--muted)]">{prod.descricao}</p>
 
                     {/* Cores */}
                     {prod.cores.length > 0 && (
                       <div className="mt-3">
-                        <p className="mb-1 text-[11px] text-zinc-400">
-                          Cor: <span className="font-semibold text-white">{corAtual}</span>
+                        <p className="mb-1 text-[11px] text-[var(--muted)]">
+                          Cor: <span className="font-semibold text-[var(--foreground)]">{corAtual}</span>
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {prod.cores.map((c) => (
@@ -321,7 +321,7 @@ export default function RomaStorePage() {
                               className={`rounded-md px-2 py-1 text-[11px] transition ${
                                 corAtual === c
                                   ? 'bg-[#D4AF37] font-bold text-black'
-                                  : 'border border-zinc-700 bg-black text-zinc-300 hover:border-zinc-500'
+                                  : 'border border-zinc-700 bg-black text-[var(--muted)] hover:border-zinc-500'
                               }`}
                             >
                               {c}
@@ -334,8 +334,8 @@ export default function RomaStorePage() {
                     {/* Tamanhos */}
                     {prod.tamanhos.length > 0 && (
                       <div className="mt-3">
-                        <p className="mb-1 text-[11px] text-zinc-400">
-                          Tamanho: <span className="font-semibold text-white">{tamAtual}</span>
+                        <p className="mb-1 text-[11px] text-[var(--muted)]">
+                          Tamanho: <span className="font-semibold text-[var(--foreground)]">{tamAtual}</span>
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {prod.tamanhos.map((t) => (
@@ -345,7 +345,7 @@ export default function RomaStorePage() {
                               className={`rounded-md px-2.5 py-1 text-[11px] transition ${
                                 tamAtual === t
                                   ? 'bg-[#D4AF37] font-bold text-black'
-                                  : 'border border-zinc-700 bg-black text-zinc-300 hover:border-zinc-500'
+                                  : 'border border-zinc-700 bg-black text-[var(--muted)] hover:border-zinc-500'
                               }`}
                             >
                               {t}
@@ -356,7 +356,7 @@ export default function RomaStorePage() {
                     )}
                   </div>
 
-                  <div className="mt-5 border-t border-zinc-800 pt-4">
+                  <div className="mt-5 border-t border-[var(--border)] pt-4">
                     <div className="flex items-baseline justify-between">
                       <div>
                         {prod.preco_original && (
@@ -364,7 +364,7 @@ export default function RomaStorePage() {
                             {fmt(prod.preco_original)}
                           </span>
                         )}
-                        <span className="text-lg font-extrabold text-white">{fmt(prod.preco)}</span>
+                        <span className="text-lg font-extrabold text-[var(--foreground)]">{fmt(prod.preco)}</span>
                         <p className="text-xs font-semibold text-emerald-400">
                           {fmt(prod.preco_pix)} no Pix (4% OFF)
                         </p>
@@ -412,13 +412,13 @@ export default function RomaStorePage() {
       </section>
 
       {/* Blog de Moda Masculina */}
-      <section id="blog" className="border-t border-zinc-900 bg-[#0C0C0C] py-14">
+      <section id="blog" className="border-t border-[var(--border)] bg-[#0C0C0C] py-14">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-8">
             <span className="text-xs font-semibold uppercase tracking-widest text-[#D4AF37]">
               Editorial Roma
             </span>
-            <h2 className="mt-1 text-2xl font-bold text-white">Blog de Moda Masculina</h2>
+            <h2 className="font-editorial mt-1 text-2xl font-bold text-[var(--foreground)]">Blog de Moda Masculina</h2>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -428,7 +428,7 @@ export default function RomaStorePage() {
                 <div
                   key={post.id}
                   onClick={() => setActivePost(post)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl border border-zinc-800 bg-[#121212] transition hover:border-[#D4AF37]/50 md:flex"
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[#121212] transition hover:border-[#D4AF37]/50 md:flex"
                 >
                   <img
                     src={post.imagem_url}
@@ -440,10 +440,10 @@ export default function RomaStorePage() {
                       <span className="text-[11px] font-semibold uppercase text-[#D4AF37]">
                         {post.categoria} • {post.tempo_leitura}
                       </span>
-                      <h3 className="mt-1 text-base font-bold text-white group-hover:text-[#E5C158]">
+                      <h3 className="mt-1 text-base font-bold text-[var(--foreground)] group-hover:text-[#E5C158]">
                         {post.titulo}
                       </h3>
-                      <p className="mt-2 line-clamp-2 text-xs text-zinc-400">{post.resumo}</p>
+                      <p className="mt-2 line-clamp-2 text-xs text-[var(--muted)]">{post.resumo}</p>
                     </div>
                     <span className="mt-3 text-xs font-semibold text-[#D4AF37]">Ler artigo →</span>
                   </div>
@@ -454,9 +454,9 @@ export default function RomaStorePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#D4AF37]/20 bg-[#050505] py-12 text-zinc-400">
+      <footer className="border-t border-[#D4AF37]/20 bg-[#050505] py-12 text-[var(--muted)]">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 pb-8 border-b border-zinc-900">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 pb-8 border-b border-[var(--border)]">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <img
@@ -469,13 +469,13 @@ export default function RomaStorePage() {
                   <p className="text-[10px] tracking-wider text-zinc-500 uppercase">Moda Social Masculina</p>
                 </div>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-[var(--muted)] leading-relaxed">
                 Referência em gravatas slim, tradicionais, camisas de bambu e alfaiataria fina para eventos e casamentos.
               </p>
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-white">Navegação</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Navegação</p>
               <ul className="mt-3 space-y-2 text-xs">
                 <li><a href="#catalogo" className="hover:text-[#D4AF37]">Coleção & Produtos</a></li>
                 <li><a href="#blog" className="hover:text-[#D4AF37]">Blog de Moda Masculina</a></li>
@@ -484,7 +484,7 @@ export default function RomaStorePage() {
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-white">Atendimento VIP</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Atendimento VIP</p>
               <ul className="mt-3 space-y-2 text-xs">
                 <li>Segunda a Sexta: 08h às 18h</li>
                 <li>Sábados: 08h às 13h</li>
@@ -516,11 +516,11 @@ export default function RomaStorePage() {
       {/* Cart Drawer */}
       {cartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm">
-          <div className="flex h-full w-full max-w-md flex-col border-l border-[#D4AF37]/30 bg-[#0E0E0E] p-5 text-white">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+          <div className="flex h-full w-full max-w-md flex-col border-l border-[#D4AF37]/30 bg-[#0E0E0E] p-5 text-[var(--foreground)]">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
               <h3 className="text-lg font-bold text-[#D4AF37]">Seu Carrinho</h3>
               <button onClick={() => setCartOpen(false)}>
-                <X className="h-5 w-5 text-zinc-400 hover:text-white" />
+                <X className="h-5 w-5 text-[var(--muted)] hover:text-[var(--foreground)]" />
               </button>
             </div>
 
@@ -531,11 +531,11 @@ export default function RomaStorePage() {
                 cart.map((item, idx) => (
                   <div
                     key={`${item.produto_id}-${item.cor}-${item.tamanho}`}
-                    className="flex items-center justify-between rounded-xl border border-zinc-800 bg-[#151515] p-3"
+                    className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[#151515] p-3"
                   >
                     <div>
                       <p className="text-sm font-semibold">{item.nome}</p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-[var(--muted)]">
                         {item.cor} • {item.tamanho}
                       </p>
                       <p className="mt-1 text-xs font-bold text-[#D4AF37]">
@@ -563,12 +563,12 @@ export default function RomaStorePage() {
             </div>
 
             {cart.length > 0 && (
-              <div className="space-y-3 border-t border-zinc-800 pt-4">
-                <div className="flex justify-between text-xs text-zinc-400">
+              <div className="space-y-3 border-t border-[var(--border)] pt-4">
+                <div className="flex justify-between text-xs text-[var(--muted)]">
                   <span>Subtotal</span>
                   <span>{fmt(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-xs text-zinc-400">
+                <div className="flex justify-between text-xs text-[var(--muted)]">
                   <span>Frete</span>
                   <span>{frete === 0 ? 'GRÁTIS' : fmt(frete)}</span>
                 </div>
@@ -591,11 +591,11 @@ export default function RomaStorePage() {
       {/* Checkout Modal */}
       {checkoutOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[#111111] p-6 text-white">
+          <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[var(--surface-alt)] p-6 text-[var(--foreground)]">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-[#D4AF37]">Finalizar Pedido Roma</h3>
               <button onClick={() => setCheckoutOpen(false)}>
-                <X className="h-5 w-5 text-zinc-400" />
+                <X className="h-5 w-5 text-[var(--muted)]" />
               </button>
             </div>
 
@@ -603,7 +603,7 @@ export default function RomaStorePage() {
               <div className="space-y-4 py-6 text-center">
                 <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400" />
                 <h4 className="text-xl font-bold">Pedido {pedidoCriado} Confirmado!</h4>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-[var(--muted)]">
                   Seu pedido já foi registrado no ERP Roma com cálculo automático de comissão.
                 </p>
                 <button
@@ -654,7 +654,7 @@ export default function RomaStorePage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-zinc-400">Forma de Pagamento</label>
+                  <label className="mb-1 block text-[var(--muted)]">Forma de Pagamento</label>
                   <select
                     value={formaPgto}
                     onChange={(e) => setFormaPgto(e.target.value as typeof formaPgto)}
@@ -666,8 +666,8 @@ export default function RomaStorePage() {
                   </select>
                 </div>
 
-                <div className="rounded-xl border border-zinc-800 bg-black p-3 space-y-1">
-                  <div className="flex justify-between text-zinc-400">
+                <div className="rounded-xl border border-[var(--border)] bg-black p-3 space-y-1">
+                  <div className="flex justify-between text-[var(--muted)]">
                     <span>Subtotal:</span>
                     <span>{fmt(subtotal)}</span>
                   </div>
@@ -698,22 +698,22 @@ export default function RomaStorePage() {
       {/* Blog Reader Modal */}
       {activePost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#D4AF37]/40 bg-[#111111] p-6 text-white">
+          <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#D4AF37]/40 bg-[var(--surface-alt)] p-6 text-[var(--foreground)]">
             <div className="mb-4 flex items-center justify-between">
               <span className="text-xs font-semibold uppercase text-[#D4AF37]">
                 {activePost.categoria}
               </span>
               <button onClick={() => setActivePost(null)}>
-                <X className="h-5 w-5 text-zinc-400" />
+                <X className="h-5 w-5 text-[var(--muted)]" />
               </button>
             </div>
-            <h2 className="text-2xl font-bold">{activePost.titulo}</h2>
+            <h2 className="font-editorial text-2xl font-bold">{activePost.titulo}</h2>
             <img
               src={activePost.imagem_url}
               alt={activePost.titulo}
               className="my-4 h-56 w-full rounded-xl object-cover"
             />
-            <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-300">
+            <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--muted)]">
               {activePost.conteudo}
             </p>
           </div>

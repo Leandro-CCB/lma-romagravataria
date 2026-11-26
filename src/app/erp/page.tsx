@@ -65,6 +65,8 @@ export default function RomaErpPage() {
     atualizarLeadStatus,
     salvarProduto,
     salvarBlogPost,
+    excluirBlogPost,
+    excluirLead,
     salvarUsuario,
     excluirUsuario,
   } = useRomaStore();
@@ -163,12 +165,15 @@ export default function RomaErpPage() {
   const [newProdPreco, setNewProdPreco] = useState('69.90');
   const [newProdCat, setNewProdCat] = useState<'Gravatas Slim' | 'Camisas Sociais' | 'Kits Noivo & Padrinhos'>('Gravatas Slim');
   const [editingProd, setEditingProd] = useState<RomaProduto | null>(null);
+  const [editingBlog, setEditingBlog] = useState<any | null>(null);
+  const [leadConversaSelecionado, setLeadConversaSelecionado] = useState<any | null>(null);
   const [uploadingImg, setUploadingImg] = useState(false);
 
   // New Blog Form
   const [newBlogTitulo, setNewBlogTitulo] = useState('');
   const [newBlogResumo, setNewBlogResumo] = useState('');
   const [newBlogConteudo, setNewBlogConteudo] = useState('');
+  const [newBlogImagem, setNewBlogImagem] = useState('');
 
   // New User Form & Edit User Modal
   const [newUsrNome, setNewUsrNome] = useState('');
@@ -419,7 +424,7 @@ export default function RomaErpPage() {
       categoria: 'Estilo Masculino',
       resumo: newBlogResumo.trim() || 'Dica exclusiva de moda social masculina Roma.',
       conteudo: newBlogConteudo.trim() || newBlogResumo.trim(),
-      imagem_url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80',
+      imagem_url: newBlogImagem.trim() || 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80',
       tempo_leitura: '3 min',
       publicado: true,
       created_at: new Date().toISOString(),
@@ -427,6 +432,7 @@ export default function RomaErpPage() {
     setNewBlogTitulo('');
     setNewBlogResumo('');
     setNewBlogConteudo('');
+    setNewBlogImagem('');
   };
 
   const handleAddUsuario = (e: React.FormEvent) => {
@@ -1442,6 +1448,13 @@ export default function RomaErpPage() {
                       />
                       {uploadingImg && <p className="mt-1 text-[#D4AF37]">Comprimindo e enviando...</p>}
                     </div>
+                    <textarea
+                      rows={3}
+                      value={editingProd.descricao || ''}
+                      onChange={(e) => setEditingProd({ ...editingProd, descricao: e.target.value })}
+                      className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                      placeholder="Descrição do produto"
+                    />
                     <div className="flex justify-end gap-2 pt-2">
                       <button
                         onClick={() => setEditingProd(null)}
@@ -1901,7 +1914,7 @@ export default function RomaErpPage() {
                       </div>
 
                       {/* Ações Rápidas de Abordagem */}
-                      <div className="border-t border-zinc-800/80 pt-3 flex items-center gap-2">
+                      <div className="border-t border-zinc-800/80 pt-3 flex flex-wrap items-center gap-2">
                         <a
                           href={`https://wa.me/55${zapLimpo}?text=${mensagemLead}`}
                           target="_blank"
@@ -1911,6 +1924,26 @@ export default function RomaErpPage() {
                           <Send className="h-3.5 w-3.5" />
                           <span>Chamar no WhatsApp</span>
                         </a>
+                        <button
+                          type="button"
+                          onClick={() => setLeadConversaSelecionado(l)}
+                          className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-200 hover:border-[#D4AF37]"
+                        >
+                          Histórico Bot
+                        </button>
+                        {activeUser?.id === masterUser?.id && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Excluir o contato "${l.nome}"?`)) {
+                                excluirLead(l.id);
+                              }
+                            }}
+                            className="rounded-xl border border-red-900/60 bg-red-950/40 px-3 py-2 text-xs font-semibold text-red-400 hover:bg-red-900/50"
+                          >
+                            Excluir
+                          </button>
+                        )}
 
                         <button
                           onClick={() => {
@@ -1937,6 +1970,42 @@ export default function RomaErpPage() {
                     Nenhum lead encontrado com o termo ou status selecionado.
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {leadConversaSelecionado && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+              <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[#111111] p-5 text-xs text-white space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold text-[#D4AF37]">
+                    Histórico do Bot — {leadConversaSelecionado.nome}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setLeadConversaSelecionado(null)}
+                    className="rounded-lg border border-zinc-700 px-3 py-1 text-zinc-300"
+                  >
+                    Fechar
+                  </button>
+                </div>
+                <div className="max-h-72 overflow-y-auto space-y-2 rounded-xl border border-zinc-800 bg-black/60 p-3">
+                  {Array.isArray(leadConversaSelecionado.mensagens) && leadConversaSelecionado.mensagens.length > 0 ? (
+                    leadConversaSelecionado.mensagens.map((m: any, idx: number) => (
+                      <div key={idx} className="rounded-lg bg-zinc-900/80 p-2">
+                        <span className="font-bold text-[#D4AF37]">{m.role || m.autor || 'Bot/Cliente'}: </span>
+                        <span className="text-zinc-200">{m.text || m.conteudo || String(m)}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-zinc-300 whitespace-pre-wrap">
+                      {leadConversaSelecionado.conversa ||
+                        leadConversaSelecionado.historico ||
+                        leadConversaSelecionado.mensagem ||
+                        `Interesse registrado: ${leadConversaSelecionado.interesse || 'Não informado'} (Origem: ${leadConversaSelecionado.origem || 'Site / Bot'})`}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -1968,6 +2037,30 @@ export default function RomaErpPage() {
                   onChange={(e) => setNewBlogConteudo(e.target.value)}
                   className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
                 />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center">
+                  <input
+                    placeholder="URL da Imagem Destaque (ou envie abaixo)"
+                    value={newBlogImagem}
+                    onChange={(e) => setNewBlogImagem(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploadingImg(true);
+                      try {
+                        const url = await compressAndUploadImage(file, 'blog');
+                        setNewBlogImagem(url);
+                      } finally {
+                        setUploadingImg(false);
+                      }
+                    }}
+                    className="w-full text-zinc-300"
+                  />
+                </div>
                 <button
                   type="submit"
                   className="rounded-lg bg-[#D4AF37] px-5 py-2 font-bold text-black"
@@ -1978,12 +2071,111 @@ export default function RomaErpPage() {
 
               <div className="space-y-3">
                 {blogPosts.map((b) => (
-                  <div key={b.id} className="rounded-xl border border-zinc-800 bg-[#121212] p-4 text-xs">
-                    <p className="text-sm font-bold text-white">{b.titulo}</p>
-                    <p className="mt-1 text-zinc-400">{b.resumo}</p>
+                  <div key={b.id} className="rounded-xl border border-zinc-800 bg-[#121212] p-4 text-xs flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {b.imagem_url && (
+                        <img
+                          src={b.imagem_url}
+                          alt={b.titulo}
+                          className="h-12 w-16 rounded-lg object-cover border border-zinc-800"
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-bold text-white">{b.titulo}</p>
+                        <p className="mt-1 text-zinc-400">{b.resumo}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingBlog(b)}
+                        className="rounded-lg border border-zinc-700 px-3 py-1.5 font-semibold text-zinc-200 hover:border-[#D4AF37]"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Excluir o artigo "${b.titulo}"?`)) {
+                            excluirBlogPost(b.id);
+                          }
+                        }}
+                        className="rounded-lg border border-red-900/60 bg-red-950/40 px-3 py-1.5 font-semibold text-red-400 hover:bg-red-900/50"
+                      >
+                        Excluir
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
+
+              {editingBlog && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+                  <div className="w-full max-w-lg rounded-2xl border border-[#D4AF37]/40 bg-[#111111] p-5 text-xs text-white space-y-3">
+                    <p className="text-sm font-bold text-[#D4AF37]">Editar Artigo do Blog</p>
+                    <input
+                      value={editingBlog.titulo || ''}
+                      onChange={(e) => setEditingBlog({ ...editingBlog, titulo: e.target.value })}
+                      className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                      placeholder="Título"
+                    />
+                    <input
+                      value={editingBlog.resumo || ''}
+                      onChange={(e) => setEditingBlog({ ...editingBlog, resumo: e.target.value })}
+                      className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                      placeholder="Resumo"
+                    />
+                    <textarea
+                      rows={4}
+                      value={editingBlog.conteudo || ''}
+                      onChange={(e) => setEditingBlog({ ...editingBlog, conteudo: e.target.value })}
+                      className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                      placeholder="Conteúdo"
+                    />
+                    <input
+                      value={editingBlog.imagem_url || ''}
+                      onChange={(e) => setEditingBlog({ ...editingBlog, imagem_url: e.target.value })}
+                      className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2"
+                      placeholder="URL da Imagem Destaque"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setUploadingImg(true);
+                        try {
+                          const url = await compressAndUploadImage(file, 'blog');
+                          setEditingBlog((prev: any) => (prev ? { ...prev, imagem_url: url } : null));
+                        } finally {
+                          setUploadingImg(false);
+                        }
+                      }}
+                      className="w-full text-zinc-300"
+                    />
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingBlog(null)}
+                        className="rounded-lg border border-zinc-700 px-4 py-2"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          salvarBlogPost(editingBlog);
+                          setEditingBlog(null);
+                        }}
+                        className="rounded-lg bg-[#D4AF37] px-4 py-2 font-bold text-black"
+                      >
+                        Salvar Artigo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

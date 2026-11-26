@@ -265,6 +265,25 @@ export function useRomaStore() {
     });
   }, []);
 
+  const excluirBlogPost = useCallback((id: string) => {
+    setBlogPosts((prev) => {
+      const next = prev.filter((b) => b.id !== id);
+      saveLocal(KEYS.blog, next);
+      return next;
+    });
+  }, []);
+
+  const excluirLead = useCallback((id: string) => {
+    setLeads((prev) => {
+      const next = prev.filter((l) => l.id !== id);
+      saveLocal(KEYS.leads, next);
+      return next;
+    });
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('roma_leads').delete().eq('id', id).then(() => {});
+    }
+  }, []);
+
   const salvarConfiguracao = useCallback((novaConfig: Partial<RomaConfiguracao>) => {
     setConfig((prev) => {
       const merged: RomaConfiguracao = { ...prev, ...novaConfig };
@@ -335,6 +354,8 @@ export function useRomaStore() {
     toggleComissaoPaga,
     salvarProduto,
     salvarBlogPost,
+    excluirBlogPost,
+    excluirLead,
     salvarUsuario,
     excluirUsuario,
   };

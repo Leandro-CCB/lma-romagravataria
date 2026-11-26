@@ -74,12 +74,13 @@ export default function RomaErpPage() {
   const activeUser = impersonatedUser || masterUser;
 
   // Autenticação da Área Administrativa
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('roma_erp_auth') === 'true';
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('roma_erp_auth') === 'true') {
+      setIsAuthenticated(true);
     }
-    return false;
-  });
+  }, []);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginSenha, setLoginSenha] = useState('');
   const [loginErro, setLoginErro] = useState('');

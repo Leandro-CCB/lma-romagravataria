@@ -178,6 +178,12 @@ export default function RomaStorePage() {
 
           <div className="flex items-center gap-4">
             <a
+              href="#nossa-historia"
+              className="hidden items-center gap-1.5 text-xs font-semibold text-[var(--muted)] transition hover:text-[#D4AF37] sm:flex"
+            >
+              <span>Nossa História</span>
+            </a>
+            <a
               href="#blog"
               className="hidden items-center gap-1.5 text-xs font-semibold text-[var(--muted)] transition hover:text-[#D4AF37] sm:flex"
             >
@@ -449,6 +455,31 @@ export default function RomaStorePage() {
                   </div>
                 </div>
               ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Nossa História & Card Site Seguro */}
+      <section id="nossa-historia" className="mx-auto max-w-7xl px-4 py-12">
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="md:col-span-2 rounded-2xl border border-[#D4AF37]/20 bg-[var(--card)] p-6 space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37]">Tradição &amp; Elegância</p>
+            <h2 className="font-editorial text-2xl font-bold text-[var(--foreground)]">Nossa História</h2>
+            <p className="text-xs leading-relaxed text-[var(--muted)]">
+              A Roma Gravataria nasceu com o propósito de unir alfaiataria clássica, tecidos selecionados e atendimento personalizado para noivos, padrinhos e executivos que valorizam presença e sofisticação em cada detalhe.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-6 flex flex-col justify-between space-y-3">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <span className="text-xl">🔒</span>
+              <h3 className="text-sm font-bold uppercase tracking-wider">Site Seguro</h3>
+            </div>
+            <p className="text-xs leading-relaxed text-[var(--muted)]">
+              Navegação protegida por criptografia SSL 256-bit. Seus dados e pedidos são tratados com total sigilo e segurança.
+            </p>
+            <div className="text-[11px] font-semibold text-emerald-400">
+              ✓ Certificado SSL Ativo • Compra Protegida
+            </div>
           </div>
         </div>
       </section>

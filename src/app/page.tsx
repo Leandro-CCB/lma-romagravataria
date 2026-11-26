@@ -197,14 +197,14 @@ export default function RomaStorePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-[#D4AF37]/15 bg-gradient-to-b from-[#12100B] via-[#0A0A0A] to-[#080808] py-14">
+      <section className="relative overflow-hidden border-b border-[var(--border)] bg-[var(--surface-alt)] py-14">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 md:grid-cols-2">
           <div className="space-y-5">
-            <span className="inline-block rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#E5C158]">
+            <span className="inline-block rounded-full border border-[#184E45]/25 bg-[#184E45]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#184E45]">
               Alfaiataria & Moda Social Masculina
             </span>
-            <h1 className="font-editorial text-4xl font-extrabold leading-tight tracking-tight text-[var(--foreground)] md:text-5xl">
-              Elegância Imperial em Cada <span className="text-[#D4AF37]">Detalhe</span>.
+            <h1 className="font-editorial text-4xl font-normal leading-tight tracking-tight text-[var(--foreground)] md:text-5xl">
+              Elegância em Cada <span className="italic text-[#184E45]">Detalhe</span>.
             </h1>
             <p className="max-w-lg text-sm leading-relaxed text-[var(--muted)]">
               Gravatas slim e tradicionais em seda jacquard, camisas em fibra de bambu e kits
@@ -213,14 +213,14 @@ export default function RomaStorePage() {
             <div className="flex flex-wrap gap-3 pt-2">
               <a
                 href="#catalogo"
-                className="flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-xs font-bold uppercase tracking-wider text-black transition hover:bg-[#E5C158]"
+                className="flex items-center gap-2 rounded-full bg-[#184E45] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#113831]"
               >
                 <span>Ver Coleção</span>
                 <ArrowRight className="h-4 w-4" />
               </a>
               <button
                 onClick={() => setCategoria('Kits Noivo & Padrinhos')}
-                className="rounded-full border border-[#D4AF37]/40 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#E5C158] transition hover:bg-[#D4AF37]/10"
+                className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[var(--foreground)] transition hover:border-[#184E45] hover:text-[#184E45]"
               >
                 Kits Padrinhos
               </button>
@@ -228,23 +228,23 @@ export default function RomaStorePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
-              <Truck className="mb-3 h-6 w-6 text-[#D4AF37]" />
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <Truck className="mb-3 h-5 w-5 text-[#184E45]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Frete Grátis</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Em compras acima de R$ 299 para todo o Brasil</p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
-              <CreditCard className="mb-3 h-6 w-6 text-[#D4AF37]" />
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <CreditCard className="mb-3 h-5 w-5 text-[#184E45]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Até 6x Sem Juros</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Ou 4% de desconto imediato no Pix</p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
-              <ShieldCheck className="mb-3 h-6 w-6 text-[#D4AF37]" />
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <ShieldCheck className="mb-3 h-5 w-5 text-[#184E45]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Compra Segura</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Garantia de troca rápida e atendimento VIP</p>
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-alt)] p-5">
-              <Award className="mb-3 h-6 w-6 text-[#D4AF37]" />
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+              <Award className="mb-3 h-5 w-5 text-[#184E45]" />
               <p className="text-sm font-bold text-[var(--foreground)]">Padrão Roma</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Acabamento premium e caimento impecável</p>
             </div>

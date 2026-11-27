@@ -165,6 +165,8 @@ export default function RomaErpPage() {
   const [newProdPreco, setNewProdPreco] = useState('69.90');
   const [newProdCat, setNewProdCat] = useState<'Gravatas Slim' | 'Camisas Sociais' | 'Kits Noivo & Padrinhos'>('Gravatas Slim');
   const [editingProd, setEditingProd] = useState<RomaProduto | null>(null);
+  const [prodBusca, setProdBusca] = useState('');
+  const [prodCategoriaFiltro, setProdCategoriaFiltro] = useState('Todas');
   const [editingBlog, setEditingBlog] = useState<any | null>(null);
   const [leadConversaSelecionado, setLeadConversaSelecionado] = useState<any | null>(null);
   const [uploadingImg, setUploadingImg] = useState(false);
@@ -1342,8 +1344,60 @@ export default function RomaErpPage() {
                 </button>
               </form>
 
+              {/* Filtro e Seletor Rápido de Produtos */}
+              <div className="grid gap-3 rounded-2xl border border-zinc-800 bg-[#111111] p-4 md:grid-cols-4">
+                <div className="md:col-span-2">
+                  <input
+                    list="produtos-cadastrados-list"
+                    placeholder="Buscar produto por nome ou código..."
+                    value={prodBusca}
+                    onChange={(e) => setProdBusca(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-700 bg-black px-3 py-2 text-xs text-white"
+                  />
+                  <datalist id="produtos-cadastrados-list">
+                    {produtos.map((p) => (
+                      <option key={p.id} value={p.nome} />
+                    ))}
+                  </datalist>
+                </div>
+                <select
+                  value={prodCategoriaFiltro}
+                  onChange={(e) => setProdCategoriaFiltro(e.target.value)}
+                  className="rounded-lg border border-zinc-700 bg-black px-3 py-2 text-xs text-white"
+                >
+                  <option value="Todas">Todas as categorias ({produtos.length})</option>
+                  {Array.from(new Set(produtos.map((p) => p.categoria))).sort().map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const found = produtos.find((p) => p.id === e.target.value);
+                    if (found) setEditingProd(found);
+                  }}
+                  className="rounded-lg border border-[#D4AF37]/40 bg-black px-3 py-2 text-xs text-[#D4AF37]"
+                >
+                  <option value="">✏️ Editar item rápido...</option>
+                  {produtos.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {produtos.map((p) => (
+                {produtos
+                  .filter((p) => {
+                    const matchCat = prodCategoriaFiltro === 'Todas' || p.categoria === prodCategoriaFiltro;
+                    const q = prodBusca.trim().toLowerCase();
+                    const matchBusca = !q || p.nome.toLowerCase().includes(q) || p.categoria.toLowerCase().includes(q);
+                    return matchCat && matchBusca;
+                  })
+                  .map((p) => (
                   <div key={p.id} className="flex flex-col justify-between rounded-2xl border border-zinc-800 bg-[#121212] p-4 text-xs">
                     <div>
                       <div className="mb-3 flex items-center gap-3">
